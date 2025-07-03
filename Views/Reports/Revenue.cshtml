@@ -1,0 +1,141 @@
+@model Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.ViewModel.Financial.RevenueReportViewModel
+
+@{
+    ViewData["Title"] = "Báo cáo doanh thu";
+}
+
+<h1>Báo cáo doanh thu</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Revenue" method="get" class="form-inline mb-4">
+            <div class="form-group mr-2">
+                <label for="startDate" class="sr-only">Ngày bắt đầu:</label>
+                <input type="date" id="startDate" name="startDate" class="form-control" value="@Model.StartDate.ToString("yyyy-MM-dd")" />
+            </div>
+            <div class="form-group mr-2">
+                <label for="endDate" class="sr-only">Ngày kết thúc:</label>
+                <input type="date" id="endDate" name="endDate" class="form-control" value="@Model.EndDate.ToString("yyyy-MM-dd")" />
+            </div>
+            <button type="submit" class="btn btn-primary">Xem báo cáo</button>
+        </form>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <h5 class="card-title">Tổng doanh thu</h5>
+                <p class="card-text h3">@Model.TotalRevenue.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Doanh thu theo loại thanh toán</h4>
+            </div>
+            <div class="card-body">
+                @if (Model.PaymentsByType != null && Model.PaymentsByType.Any())
+                {
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Loại</th>
+                                <th>Số tiền</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var entry in Model.PaymentsByType)
+                            {
+                                <tr>
+                                    <td>@entry.Key</td>
+                                    <td>@entry.Value.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p>Không có dữ liệu.</p>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Doanh thu theo phương thức thanh toán</h4>
+            </div>
+            <div class="card-body">
+                @if (Model.PaymentsByMethod != null && Model.PaymentsByMethod.Any())
+                {
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Phương thức</th>
+                                <th>Số tiền</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var entry in Model.PaymentsByMethod)
+                            {
+                                <tr>
+                                    <td>@entry.Key</td>
+                                    <td>@entry.Value.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p>Không có dữ liệu.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Doanh thu hàng tháng</h4>
+            </div>
+            <div class="card-body">
+                @if (Model.MonthlyBreakdown != null && Model.MonthlyBreakdown.Any())
+                {
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Năm</th>
+                                <th>Tháng</th>
+                                <th>Doanh thu</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var monthly in Model.MonthlyBreakdown)
+                            {
+                                <tr>
+                                    <td>@monthly.Year</td>
+                                    <td>@monthly.Month</td>
+                                    <td>@monthly.Revenue.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p>Không có dữ liệu.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div> 

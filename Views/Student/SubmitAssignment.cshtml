@@ -1,0 +1,52 @@
+@{
+    ViewData["Title"] = "Nộp bài tập";
+    var assignment = ViewBag.Assignment;
+    var studentAssignment = ViewBag.StudentAssignment;
+}
+<h2 class="mb-4">Nộp bài tập</h2>
+@if (assignment != null)
+{
+    <div class="mb-3">
+        <strong>Bài tập:</strong> @assignment.Title <br />
+        <span>@assignment.Description</span>
+        <div><strong>Hạn nộp:</strong> @assignment.DueDate?.ToString("dd/MM/yyyy HH:mm")</div>
+    </div>
+    @if (studentAssignment != null && studentAssignment.Status.ToString() == "Submitted")
+    {
+        <div class="alert alert-info">Bạn đã nộp bài này. Có thể nộp lại để cập nhật.</div>
+        <div class="card mb-3">
+            <div class="card-header">Bài đã nộp:</div>
+            <div class="card-body">
+                <div><strong>Nội dung:</strong></div>
+                <div class="mb-2">@studentAssignment.SubmissionContent</div>
+                @if (!string.IsNullOrEmpty(studentAssignment.AttachedFiles))
+                {
+                    <div><strong>File đính kèm:</strong></div>
+                    <ul>
+                        @foreach (var file in studentAssignment.AttachedFiles.Split(';'))
+                        {
+                            <li><a href="/@file" target="_blank">@System.IO.Path.GetFileName(file)</a></li>
+                        }
+                    </ul>
+                }
+                <div><strong>Thời gian nộp:</strong> @studentAssignment.SubmittedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</div>
+            </div>
+        </div>
+    }
+    <form asp-action="SubmitAssignment" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="assignmentId" value="@assignment.id" />
+        <div class="mb-3">
+            <label for="content" class="form-label">Nội dung bài làm</label>
+            <textarea name="content" class="form-control" rows="5">@(studentAssignment?.SubmissionContent ?? "")</textarea>
+        </div>
+        <div class="mb-3">
+            <label for="files" class="form-label">Tệp đính kèm (nếu có)</label>
+            <input type="file" name="files" class="form-control" multiple />
+        </div>
+        <button type="submit" class="btn btn-success">Nộp bài</button>
+    </form>
+}
+else
+{
+    <div class="alert alert-danger">Không tìm thấy thông tin bài tập.</div>
+} 

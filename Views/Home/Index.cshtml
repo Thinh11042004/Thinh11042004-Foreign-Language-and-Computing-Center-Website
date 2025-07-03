@@ -1,0 +1,268 @@
+@using Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.Enums
+@using Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.ViewModel.Home
+@model HomeViewModel
+@{
+    ViewData["Title"] = "Trang chủ";
+}
+
+<!-- Phần Hero -->
+<section class="hero-section bg-gradient-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center min-vh-50">
+            <div class="col-lg-6">
+                <div class="hero-content animate__animated animate__fadeInLeft">
+                    <h1 class="display-4 fw-bold mb-4">
+                        Làm chủ <span class="text-warning">Ngoại ngữ</span> &
+                        <span class="text-info">Công nghệ</span>
+                    </h1>
+                    <p class="lead mb-4">
+                        Hãy cùng hàng ngàn học viên thay đổi sự nghiệp của họ qua các khóa học ngoại ngữ và tin học toàn diện. Giảng viên giàu kinh nghiệm, thời gian linh hoạt, chứng chỉ uy tín.
+                    </p>
+                    <div class="hero-buttons">
+                        <!-- Đã xóa nút Khám phá khóa học và Xem giới thiệu -->
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="hero-stats animate__animated animate__fadeInRight">
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="stat-card bg-white bg-opacity-10 backdrop-blur rounded-4 p-4 text-center">
+                                <div class="stat-icon mb-2">
+                                    <i class="fas fa-users fa-2x text-warning"></i>
+                                </div>
+                                <h3 class="fw-bold mb-1 counter" data-target="@Model.Statistics.TotalStudents">0</h3>
+                                <small class="text-light">Học viên</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="stat-card bg-white bg-opacity-10 backdrop-blur rounded-4 p-4 text-center">
+                                <div class="stat-icon mb-2">
+                                    <i class="fas fa-chalkboard-teacher fa-2x text-success"></i>
+                                </div>
+                                <h3 class="fw-bold mb-1 counter" data-target="@Model.Statistics.TotalTeachers">0</h3>
+                                <small class="text-light">Giáo viên</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="stat-card bg-white bg-opacity-10 backdrop-blur rounded-4 p-4 text-center">
+                                <div class="stat-icon mb-2">
+                                    <i class="fas fa-book fa-2x text-info"></i>
+                                </div>
+                                <h3 class="fw-bold mb-1 counter" data-target="@Model.Statistics.TotalCourses">0</h3>
+                                <small class="text-light">Khóa học đang mở</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="stat-card bg-white bg-opacity-10 backdrop-blur rounded-4 p-4 text-center">
+                                <div class="stat-icon mb-2">
+                                    <i class="fas fa-trophy fa-2x text-warning"></i>
+                                </div>
+                                <h3 class="fw-bold mb-1 counter" data-target="@Model.Statistics.ActiveClasses">0</h3>
+                                <small class="text-light">Lớp học đang hoạt động</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Biểu tượng nền -->
+    <div class="hero-bg-animation">
+        <div class="floating-icon" style="top: 10%; left: 10%;">
+            <i class="fas fa-code"></i>
+        </div>
+        <div class="floating-icon" style="top: 20%; right: 15%;">
+            <i class="fas fa-language"></i>
+        </div>
+        <div class="floating-icon" style="bottom: 30%; left: 5%;">
+            <i class="fas fa-laptop-code"></i>
+        </div>
+        <div class="floating-icon" style="bottom: 10%; right: 10%;">
+            <i class="fas fa-graduation-cap"></i>
+        </div>
+    </div>
+</section>
+
+<!-- Khóa học nổi bật -->
+<section id="featured-courses" class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold mb-3">Khóa học nổi bật</h2>
+            <!-- Đã xóa dòng khám phá các khóa học phổ biến và được đánh giá cao nhất -->
+        </div>
+
+        <div class="row g-4">
+            @foreach (var course in Model.FeaturedCourses)
+            {
+                <div class="col-lg-4 col-md-6">
+                    <div class="card h-100 shadow border-0 rounded-4 course-card position-relative overflow-hidden transition-hover" style="transition: box-shadow 0.3s;">
+                        <div class="position-relative" style="height: 200px; overflow: hidden;">
+                            <img src="@(GetCourseImage(course.Type, course.Category))" class="card-img-top object-fit-cover w-100 h-100" alt="@course.Name" style="object-fit: cover; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+                            <div class="position-absolute top-0 end-0 m-3">
+                                @if (course.Type == CourseType.Language)
+                                {
+                                    <span class="badge bg-primary rounded-pill"><i class="fas fa-language me-1"></i>Ngôn ngữ</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success rounded-pill"><i class="fas fa-laptop-code me-1"></i>Tin học</span>
+                                }
+                            </div>
+                        </div>
+                        <div class="card-body p-4 d-flex flex-column">
+                            <div class="mb-2 d-flex align-items-center gap-2">
+                                <span class="badge bg-light text-dark">
+                                    @(course.Level == CourseLevel.Beginner ? "Sơ cấp" :
+                                      course.Level == CourseLevel.Intermediate ? "Trung cấp" :
+                                      course.Level == CourseLevel.UpperIntermediate ? "Nâng cao" :
+                                      course.Level == CourseLevel.Advanced ? "Chuyên sâu" :
+                                      course.Level.ToString())
+                                </span>
+                                <span class="text-muted small"><i class="fas fa-clock me-1"></i>@course.DurationHours giờ</span>
+                            </div>
+                            <h5 class="card-title fw-bold mb-2">@course.Name</h5>
+                            <p class="card-text text-muted mb-3" style="min-height: 48px;">
+                                @(string.IsNullOrWhiteSpace(course.Description) ? "Chưa có mô tả." : (course.Description.Length > 100 ? course.Description.Substring(0, 100) + "..." : course.Description))
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center mt-auto">
+                                <div class="price h5 mb-0 fw-bold text-primary">
+                                    @if (course.Fee == null || course.Fee == 0)
+                                    {
+                                        <span>Miễn phí</span>
+                                    }
+                                    else
+                                    {
+                                        <span>@course.Fee.ToString("N0") đ</span>
+                                    }
+                                </div>
+                                <a href="@Url.Action("DetailForStudent", "Student", new { id = course.id })" class="btn btn-outline-primary rounded-pill px-3">Đăng ký ngay</a>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="text-center mt-5">
+            <!-- Đã xóa nút Khám phá khóa học của chúng tôi -->
+        </div>
+    </div>
+</section>
+
+<!-- Lợi ích -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold mb-3">Vì sao chọn chúng tôi?</h2>
+            <p class="lead text-muted">Trải nghiệm khác biệt với phương pháp đào tạo toàn diện</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="feature-item text-center p-4 h-100">
+                    <div class="feature-icon mb-4">
+                        <div class="icon-circle bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                            <i class="fas fa-chalkboard-teacher fa-2x text-primary"></i>
+                        </div>
+                    </div>
+                    <h5 class="fw-bold mb-3">Giảng viên chuyên gia</h5>
+                    <p class="text-muted">Giảng dạy bởi các chuyên gia trong ngành, giàu kinh nghiệm thực tế và phương pháp hiện đại.</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="feature-item text-center p-4 h-100">
+                    <div class="feature-icon mb-4">
+                        <div class="icon-circle bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                            <i class="fas fa-laptop fa-2x text-success"></i>
+                        </div>
+                    </div>
+                    <h5 class="fw-bold mb-3">Trang thiết bị hiện đại</h5>
+                    <p class="text-muted">Phòng học và phòng lab hiện đại, được trang bị công nghệ mới nhất.</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="feature-item text-center p-4 h-100">
+                    <div class="feature-icon mb-4">
+                        <div class="icon-circle bg-warning bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                            <i class="fas fa-certificate fa-2x text-warning"></i>
+                        </div>
+                    </div>
+                    <h5 class="fw-bold mb-3">Chứng chỉ uy tín</h5>
+                    <p class="text-muted">Chứng nhận được công nhận rộng rãi, tăng cơ hội nghề nghiệp của bạn.</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="feature-item text-center p-4 h-100">
+                    <div class="feature-icon mb-4">
+                        <div class="icon-circle bg-info bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                            <i class="fas fa-clock fa-2x text-info"></i>
+                        </div>
+                    </div>
+                    <h5 class="fw-bold mb-3">Lịch học linh hoạt</h5>
+                    <p class="text-muted">Chọn giờ học sáng, chiều, tối hoặc cuối tuần để phù hợp lịch trình cá nhân.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Học viên nổi bật -->
+<section id="student-section" class="py-5 bg-light">
+    <!-- Nội dung học viên nổi bật ở đây -->
+</section>
+
+<!-- Giáo viên nổi bật -->
+<section id="teacher-section" class="py-5">
+    <!-- Nội dung giáo viên nổi bật ở đây -->
+</section>
+
+<!-- Các phần khác như "Câu chuyện thành công", "CTA", "Video Modal", Scripts -->
+<!-- ... vẫn giữ nguyên nếu cần hỗ trợ thêm mình sẽ tiếp tục viết tiếp -->
+@section Scripts {
+<script>
+    $(document).ready(function () {
+        $('.counter').each(function () {
+            var $this = $(this);
+            var target = parseInt($this.data('target'));
+            $({ value: 0 }).animate({ value: target }, {
+                duration: 2000,
+                easing: 'swing',
+                step: function () { $this.text(Math.ceil(this.value)); },
+                complete: function () { $this.text(target); }
+            });
+        });
+
+            $('a[href^="#"]').on('click', function (e) {
+                e.preventDefault();
+                var target = $(this.getAttribute('href'));
+                if (target.length) {
+                    $('html, body').animate({ scrollTop: target.offset().top - 80 }, 1000);
+                }
+            });
+
+            $('.course-card').hover(
+                function () {
+                    $(this).find('.course-overlay').addClass('opacity-100');
+                    $(this).addClass('shadow-lg').removeClass('shadow-hover');
+                },
+                function () {
+                    $(this).find('.course-overlay').removeClass('opacity-100');
+                    $(this).addClass('shadow-hover').removeClass('shadow-lg');
+                }
+            );
+        });
+    </script>
+
+@functions {
+    public string GetCourseImage(CourseType type, string category)
+    {
+        if (string.IsNullOrEmpty(category)) category = "general";
+        return type == CourseType.Language
+            ? $"~/images/courses/language-{category.ToLower()}.jpg"
+            : $"~/images/courses/it-{category.ToLower()}.jpg";
+    }
+}
+}

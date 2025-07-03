@@ -1,0 +1,199 @@
+@using Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.ViewModel.ClassroomViewModel
+@model Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.ViewModel.ClassroomViewModel.ClassDetailsViewModel
+
+@{ 
+    ViewData["Title"] = "Chi tiết lớp học";
+}
+<style>
+    .schedule-table {
+        width: 100%;
+        table-layout: fixed;
+        font-size: 14px;
+    }
+
+    .bg-schedule-header {
+        background-color: #e6f0ff;
+        font-weight: bold;
+    }
+
+    .bg-schedule-period {
+        background-color: #4da6ff;
+        color: #0d47a1;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .schedule-cell-active {
+        background-color: #fff3cd !important; /* vàng nhạt đậm hơn */
+        vertical-align: middle;
+    }
+
+    .schedule-subject {
+        color: #0d47a1; /* 🔵 xanh đậm hơn */
+        font-weight: bold;
+    }
+
+    .schedule-room {
+        color: #5c5c5c; /* xám đậm hơn */
+        font-style: italic;
+        font-size: 13px;
+    }
+
+    .schedule-table td, .schedule-table th {
+        border: 1px solid #ccc;
+        width: calc(100% / 8);
+        max-width: calc(100% / 8);
+        vertical-align: middle;
+        text-align: center;
+        padding: 4px 6px;
+    }
+
+    .schedule-table td {
+        min-height: 60px;
+        display: table-cell;
+        vertical-align: middle;
+    }
+
+
+    .schedule-table tr {
+        height: 60px; /* hoặc 48px, tuỳ độ cao mong muốn */
+    }
+
+</style>
+
+
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h2 class="card-title mb-0">Chi tiết lớp học: @Model.Class?.Name</h2>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-4">Tên lớp học:</dt>
+                <dd class="col-sm-8">@Model.Class?.Name</dd>
+                <dt class="col-sm-4">Số học viên tối đa:</dt>
+                <dd class="col-sm-8">@Model.Class?.MaxStudents</dd>
+                <dt class="col-sm-4">Trạng thái:</dt>
+                <dd class="col-sm-8">
+                    @switch (Model.Class?.Status.ToString())
+                    {
+                        case "Planned":
+                            @:Đang lên kế hoạch
+                            break;
+                        case "Ongoing":
+                            @:Đang diễn ra
+                            break;
+                        case "Completed":
+                            @:Đã hoàn thành
+                            break;
+                        case "Cancelled":
+                            @:Đã hủy
+                            break;
+                        default:
+                            @Model.Class?.Status
+                            break;
+                    }
+                </dd>
+                <dt class="col-sm-4">Ghi chú:</dt>
+                <dd class="col-sm-8">@Model.Class?.Notes</dd>
+                <dt class="col-sm-4">Tổng số lượt đăng ký:</dt>
+                <dd class="col-sm-8">@Model.Class?.Enrollments?.Count() ?? 0</dd>
+                <dt class="col-sm-4">Tổng số bài học:</dt>
+                <dd class="col-sm-8">@Model.Class?.Lessons?.Count() ?? 0</dd>
+                <dt class="col-sm-4">Tổng số giáo viên:</dt>
+                <dd class="col-sm-8">@Model.Class?.ClassTeachers?.Count() ?? 0</dd>
+                <dt class="col-sm-4">Phòng học:</dt>
+                <dd class="col-sm-8">@Model.Class?.Room?.Name ?? "Chưa cập nhật"</dd>
+                <dt class="col-sm-4">Ngày bắt đầu:</dt>
+                <dd class="col-sm-8">@Model.Class?.StartDate.ToString("dd/MM/yyyy")</dd>
+                <dt class="col-sm-4">Ngày kết thúc:</dt>
+                <dd class="col-sm-8">@Model.Class?.EndDate.ToString("dd/MM/yyyy")</dd>
+                <dt class="col-sm-4">Lịch trình:</dt>
+                <dd class="col-sm-8">
+                    @{
+                        var days = new List<string> { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
+                        var dayLabels = new Dictionary<string, string>
+                        {
+                            { "Mon", "Thứ 2" },
+                            { "Tue", "Thứ 3" },
+                            { "Wed", "Thứ 4" },
+                            { "Thu", "Thứ 5" },
+                            { "Fri", "Thứ 6" },
+                            { "Sat", "Thứ 7" },
+                            { "Sun", "Chủ nhật" }
+                        };
+                        var slots = new List<string> { "Ca1", "Ca2", "Ca3", "Ca4", "Ca5", "Ca6" };
+                        var slotLabels = new Dictionary<string, string>
+                        {
+                            { "Ca1", "Ca 1 (08h00–09h30)" },
+                            { "Ca2", "Ca 2 (10h00–11h30)" },
+                            { "Ca3", "Ca 3 (13h00–14h30)" },
+                            { "Ca4", "Ca 4 (15h00–16h30)" },
+                            { "Ca5", "Ca 5 (18h00–19h30)" },
+                            { "Ca6", "Ca 6 (20h00–21h30)" }
+                        };
+                        var schedule = Model.Class?.Schedule?.Split(",", StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).ToList() ?? new List<string>();
+                    }
+
+                    <table class="table table-bordered text-center">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                @foreach (var day in days)
+                                {
+                                    <th>@dayLabels[day]</th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var slot in slots)
+                            {
+                                <tr>
+                                    <td><strong>@slotLabels[slot]</strong></td>
+                                    @foreach (var day in days)
+                                    {
+                                        var value = $"{day}-{slot}";
+                                        <td class="@(schedule.Contains(value) ? "table-warning" : "")">
+                                            @(schedule.Contains(value) ? "✔" : "")
+                                        </td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                </dd>
+            </dl>
+        </div>
+        <div class="card-footer text-end">
+            <button class="btn btn-warning">Sửa</button>
+            <button class="btn btn-secondary">Quay lại danh sách</button>
+        </div>
+    </div>
+
+   
+
+    @if (Model.Class?.Enrollments != null && Model.Class.Enrollments.Any())
+    {
+        <h4>Học viên đăng ký:</h4>
+        <ul class="list-group">
+            @foreach (var enrollment in Model.Class.Enrollments)
+            {
+                <li class="list-group-item">
+                    @(enrollment.Student != null && enrollment.Student.User != null ? enrollment.Student.User.FullName : "Chưa cập nhật")
+                </li>
+            }
+        </ul>
+    }
+
+    @if (Model.Class?.Lessons != null && Model.Class.Lessons.Any())
+    {
+        <h3 class="mt-4">Các bài học:</h3>
+        <ul class="list-group">
+            @foreach (var lesson in Model.Class.Lessons)
+            {
+                <li class="list-group-item">@lesson.Title</li>
+            }
+        </ul>
+    }
+</div> 

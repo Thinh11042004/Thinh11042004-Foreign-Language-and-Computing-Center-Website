@@ -1,0 +1,39 @@
+@using Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.Enums
+@model Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.Users.Students
+@{
+    ViewData["Title"] = "Thông tin cá nhân";
+}
+<div class="container py-4">
+    <h2 class="fw-bold text-primary mb-4"><i class="fas fa-user-graduate me-2"></i>Thông tin học sinh</h2>
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Họ tên</dt>
+                <dd class="col-sm-9">@Model.User.FullName</dd>
+                <dt class="col-sm-3">Email</dt>
+                <dd class="col-sm-9">@Model.User.Email</dd>
+                <dt class="col-sm-3">Mã học viên</dt>
+                <dt class="col-sm-3">Trạng thái</dt>
+                <dd class="col-sm-9">@Model.Status</dd>
+            </dl>
+        </div>
+    </div>
+    <div class="card shadow-sm">
+        <div class="card-header bg-light fw-bold">Các lớp đang học</div>
+        <div class="card-body">
+            @if (Model.Enrollments != null && Model.Enrollments.Any(e => e.Status == EnrollmentStatus.Studying))
+            {
+                <ul class="list-group">
+                    @foreach (var e in Model.Enrollments.Where(e => e.Status == EnrollmentStatus.Studying))
+                    {
+                        <li class="list-group-item">@e.Class.Name</li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <span class="text-muted">Chưa đăng ký lớp nào.</span>
+            }
+        </div>
+    </div>
+</div> 

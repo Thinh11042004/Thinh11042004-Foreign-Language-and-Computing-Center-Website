@@ -1,0 +1,32 @@
+@model Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.Users.Teachers
+@{
+    ViewData["Title"] = "Hồ sơ giáo viên";
+}
+<div class="container py-4">
+    <h2 class="fw-bold text-primary mb-4"><i class="fas fa-user-tie me-2"></i>Hồ sơ giáo viên</h2>
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-4 text-center">
+                    <h4 class="mb-1 text-uppercase text-primary">@Model.User.FullName</h4>
+                </div>
+                <div class="col-md-8">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Email:</dt>
+                        <dd class="col-sm-8">@Model.User.Email</dd>
+                        <dt class="col-sm-4">Chuyên môn:</dt>
+                        <dd class="col-sm-8">@(string.IsNullOrWhiteSpace(Model.Specialization) ? "Chưa cập nhật" : Model.Specialization)</dd>
+                        <dt class="col-sm-4">Lĩnh vực giảng dạy:</dt>
+                        <dd class="col-sm-8">@(string.IsNullOrWhiteSpace(Model.SubjectAreas) ? "Chưa cập nhật" : Model.SubjectAreas)</dd>
+                        <dt class="col-sm-4">Bằng cấp:</dt>
+                        <dd class="col-sm-8">@(string.IsNullOrWhiteSpace(Model.Qualifications) ? "Chưa cập nhật" : Model.Qualifications)</dd>
+                        <dt class="col-sm-4">Tiểu sử:</dt>
+                        <dd class="col-sm-8">@(string.IsNullOrWhiteSpace(Model.Bio) ? "Chưa cập nhật" : Model.Bio)</dd>
+                        <dt class="col-sm-4">Số điện thoại:</dt>
+                        <dd class="col-sm-8">@(string.IsNullOrWhiteSpace(Model.User.PhoneNumber) ? "Chưa cập nhật" : Model.User.PhoneNumber)</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

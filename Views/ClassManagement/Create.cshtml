@@ -1,0 +1,195 @@
+@using Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.ViewModel.ClassroomViewModel
+@model Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.ViewModel.ClassroomViewModel.CreateClassViewModel
+
+@{
+    ViewData["Title"] = "Tạo Lớp học mới";
+
+    var days = new List<string> { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
+    var dayLabels = new Dictionary<string, string>
+    {
+        { "Mon", "Thứ 2" },
+        { "Tue", "Thứ 3" },
+        { "Wed", "Thứ 4" },
+        { "Thu", "Thứ 5" },
+        { "Fri", "Thứ 6" },
+        { "Sat", "Thứ 7" },
+        { "Sun", "Chủ nhật" }
+    };
+
+    var slots = new List<string> { "Ca1", "Ca2", "Ca3", "Ca4", "Ca5", "Ca6" };
+    var slotLabels = new Dictionary<string, string>
+{
+    { "Ca1", "Ca 1 (08h00–09h30)" },
+    { "Ca2", "Ca 2 (10h00–11h30)" },
+    { "Ca3", "Ca 3 (13h00–14h30)" },
+    { "Ca4", "Ca 4 (15h00–16h30)" },
+    { "Ca5", "Ca 5 (18h00–19h30)" },
+    { "Ca6", "Ca 6 (20h00–21h30)" }
+};
+}
+
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-danger">@ViewBag.Error</div>
+}
+
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h2 class="card-title mb-0">Tạo Lớp học mới</h2>
+        </div>
+        <div class="card-body">
+            <form asp-action="Create" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label asp-for="Name" class="control-label">Tên lớp học:</label>
+                            <input asp-for="Name" class="form-control" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="CourseId" class="control-label">Khóa học:</label>
+                            <select asp-for="CourseId" class="form-control"
+                                    asp-items="@(new SelectList(Model.Courses, "id", "Name"))">
+                                <option value="">-- Chọn khóa học --</option>
+                            </select>
+                            <span asp-validation-for="CourseId" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                           <label for="RoomId" class="control-label">Phòng học:</label>
+                            <select name="RoomId" id="RoomId" class="form-control">
+                                <option value="">-- Chọn phòng học --</option>
+                                @foreach (var room in Model.Rooms)
+                                {
+                                    var isSelected = Model.RoomId == room.id ? "selected" : "";
+                                    var optionHtml = $"<option value='{room.id}' data-capacity='{room.Capacity}' {isSelected}>{room.Name} (Sức chứa: {room.Capacity})</option>";
+                                    @Html.Raw(optionHtml)
+                                }
+                            </select>
+                            <span asp-validation-for="RoomId" class="text-danger"></span>
+
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="StartDate" class="control-label">Ngày bắt đầu:</label>
+                            <input asp-for="StartDate" class="form-control" type="date" />
+                            <span asp-validation-for="StartDate" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="MaxStudents" class="control-label">Số học viên tối đa:</label>
+                            <input asp-for="MaxStudents" class="form-control" type="number" id="MaxStudents" />
+                            <span asp-validation-for="MaxStudents" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="TeacherIds" class="control-label">Giáo viên:</label>
+                            <select name="TeacherIds" class="form-control" multiple>
+                                <option value="">-- Chọn giáo viên --</option>
+                                @foreach (var teacher in Model.Teachers)
+                                {
+                                    var selected = Model.TeacherIds != null && Model.TeacherIds.Contains(teacher.id) ? "selected" : "";
+                                    var displayText = $"{teacher.User.FullName} - {teacher.User.Email} - {teacher.User.PhoneNumber}";
+                                    var optionHtml = $"<option value='{teacher.id}' {selected}>{displayText}</option>";
+                                    @Html.Raw(optionHtml)
+                                }
+                            </select>
+                            <span asp-validation-for="TeacherIds" class="text-danger"></span>
+                        </div>
+
+                        <input asp-for="EndDate" type="hidden" />
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="table-responsive">
+                            <table class="table table-bordered text-center">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        @foreach (var day in days)
+                                        {
+                                            <th>@dayLabels[day]</th>
+                                        }
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var slot in slots)
+                                    {
+                                        <tr>
+                                            <td><strong>@slotLabels[slot]</strong></td>
+                                            @foreach (var day in days)
+                                            {
+                                                var value = $"{day}-{slot}";
+                                                <td>
+                                                    <input type="checkbox" name="SelectedScheduleSlots" value="@value"
+                                                           @(Model.SelectedScheduleSlots != null && Model.SelectedScheduleSlots.Contains(value) ? "checked" : "") />
+                                                </td>
+                                            }
+                                        </tr>
+                                    }
+
+                                </tbody>
+                            </table>
+                        </div>
+
+                       
+                    </div>
+                </div>
+
+                <div class="form-group mt-3 text-end">
+                    <button type="submit" class="btn btn-primary">Tạo mới</button>
+                    <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const roomSelect = document.getElementById("RoomId");
+        const maxStudentsInput = document.getElementById("MaxStudents");
+        const form = document.querySelector("form[asp-action='Create']");
+        form.addEventListener("submit", function (e) {
+            const checked = document.querySelectorAll("input[name='SelectedScheduleSlots']:checked");
+            if (checked.length === 0) {
+                alert("Vui lòng chọn ít nhất một ca học cho lớp!");
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        function updateCapacityLimit() {
+            const selectedOption = roomSelect.options[roomSelect.selectedIndex];
+            const capacity = parseInt(selectedOption.dataset.capacity || 0);
+
+            if (!isNaN(capacity)) {
+                maxStudentsInput.setAttribute("max", capacity);
+            } else {
+                maxStudentsInput.removeAttribute("max");
+            }
+        }
+
+        // Khi thay đổi phòng học
+        roomSelect.addEventListener("change", function () {
+            updateCapacityLimit();
+        });
+
+        // Khi nhập số học viên
+        maxStudentsInput.addEventListener("input", function () {
+            const capacity = parseInt(roomSelect.options[roomSelect.selectedIndex]?.dataset.capacity || 0);
+            const value = parseInt(this.value);
+            if (capacity && value > capacity) {
+                alert(`⚠️ Số học viên không được vượt quá sức chứa của phòng (${capacity} học viên).`);
+                this.value = capacity;
+            }
+        });
+
+        updateCapacityLimit(); // Gọi khi load
+    });
+</script>

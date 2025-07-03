@@ -1,0 +1,59 @@
+@model Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.Learning.Enrollment
+@using Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.Enums
+@{
+    ViewData["Title"] = "Sửa thông tin đăng ký học viên";
+    var statusLabels = new Dictionary<EnrollmentStatus, string> {
+        { EnrollmentStatus.Studying, "Đang học" },
+        { EnrollmentStatus.Complete, "Hoàn thành" },
+        { EnrollmentStatus.Dropped, "Bỏ học" },
+        { EnrollmentStatus.Suspended, "Tạm dừng" },
+        { EnrollmentStatus.Transferred, "Chuyển lớp" }
+    };
+}
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-warning text-white">
+            <h2 class="card-title mb-0">Sửa thông tin đăng ký học viên</h2>
+        </div>
+        <div class="card-body">
+            <form asp-action="EditStudent" method="post">
+                <input type="hidden" name="courseId" value="@Model.CourseId" />
+                <input type="hidden" name="studentId" value="@Model.StudentId" />
+                <div class="mb-3">
+                    <label class="form-label">Họ tên:</label>
+                    <input class="form-control" value="@Model.Student?.User?.FullName" readonly />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Email:</label>
+                    <input class="form-control" value="@Model.Student?.User?.Email" readonly />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Điện thoại:</label>
+                    <input class="form-control" value="@Model.Student?.User?.PhoneNumber" readonly />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Trạng thái đăng ký:</label>
+                    @{
+                        var options = "";
+                        foreach (var status in Enum.GetValues(typeof(EnrollmentStatus)).Cast<EnrollmentStatus>())
+                        {
+                            var selected = Model.Status == status ? "selected" : "";
+                            options += $"<option value='{status}' {selected}>{statusLabels[status]}</option>";
+                        }
+                    }
+                    <select asp-for="Status" class="form-select">
+                        @Html.Raw(options)
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Lớp học:</label>
+                    <select asp-for="ClassId" class="form-select" asp-items="ViewBag.Classes">
+                        <option value="">-- Chọn lớp --</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-warning">Lưu thay đổi</button>
+                <a asp-action="Students" asp-route-id="@Model.CourseId" class="btn btn-secondary ms-2">Quay lại</a>
+            </form>
+        </div>
+    </div>
+</div> 

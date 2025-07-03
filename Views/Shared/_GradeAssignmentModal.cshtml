@@ -1,0 +1,203 @@
+﻿<div class="modal fade" id="gradeModal" tabindex="-1" aria-labelledby="gradeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="gradeModalLabel">
+                    <i class="fas fa-graduation-cap"></i> Grade Assignment
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="gradeForm" method="post" asp-action="GradeAssignment">
+                    <input type="hidden" id="studentAssignmentId" name="studentAssignmentId" />
+
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6 class="mb-0">Student Submission</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label class="form-label">Assignment:</label>
+                                        <p id="assignmentTitle" class="fw-bold"></p>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Student:</label>
+                                        <p id="studentName" class="fw-bold"></p>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Submission Content:</label>
+                                        <div id="submissionContent" class="border rounded p-3 bg-light" style="min-height: 200px;"></div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Attached Files:</label>
+                                        <div id="attachedFiles"></div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Submitted At:</label>
+                                        <p id="submittedAt"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6 class="mb-0">Grading</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label for="score" class="form-label">Score:</label>
+                                        <div class="input-group">
+                                            <input type="number" class="form-control" id="score" name="score"
+                                                   min="0" step="0.5" required />
+                                            <span class="input-group-text">/ <span id="maxScore"></span></span>
+                                        </div>
+                                        <div class="form-text">Enter score out of maximum points</div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="percentage" class="form-label">Percentage:</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="percentage" readonly />
+                                            <span class="input-group-text">%</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="grade" class="form-label">Letter Grade:</label>
+                                        <input type="text" class="form-control" id="grade" readonly />
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="feedback" class="form-label">Feedback:</label>
+                                        <textarea class="form-control" id="feedback" name="feedback" rows="8"
+                                                  placeholder="Provide detailed feedback to the student..."></textarea>
+                                    </div>
+
+                                    <div class="grading-rubric">
+                                        <h6>Quick Feedback Templates:</h6>
+                                        <div class="btn-group-vertical w-100" role="group">
+                                            <button type="button" class="btn btn-outline-success btn-sm feedback-template"
+                                                    data-feedback="Excellent work! You demonstrated a thorough understanding of the concepts.">
+                                                Excellent
+                                            </button>
+                                            <button type="button" class="btn btn-outline-primary btn-sm feedback-template"
+                                                    data-feedback="Good job! Your solution is correct with minor areas for improvement.">
+                                                Good
+                                            </button>
+                                            <button type="button" class="btn btn-outline-warning btn-sm feedback-template"
+                                                    data-feedback="Satisfactory work. Please review the feedback and try to improve.">
+                                                Satisfactory
+                                            </button>
+                                            <button type="button" class="btn btn-outline-danger btn-sm feedback-template"
+                                                    data-feedback="This needs more work. Please see me during office hours for additional help.">
+                                                Needs Improvement
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button type="submit" form="gradeForm" class="btn btn-success">
+                    <i class="fas fa-check"></i> Save Grade
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        // Load assignment details when modal opens
+        $('#gradeModal').on('show.bs.modal', function(event) {
+            const button = $(event.relatedTarget);
+            const assignmentId = button.data('assignment-id');
+
+            loadAssignmentForGrading(assignmentId);
+        });
+
+        // Calculate percentage and grade when score changes
+        $('#score').on('input', function() {
+            calculateGrade();
+        });
+
+        // Quick feedback templates
+        $('.feedback-template').on('click', function() {
+            const feedback = $(this).data('feedback');
+            $('#feedback').val(feedback);
+        });
+    });
+
+    function loadAssignmentForGrading(assignmentId) {
+        $.get(`/api/Teacher/GetStudentAssignment/${assignmentId}`)
+            .done(function(data) {
+                $('#studentAssignmentId').val(data.id);
+                $('#assignmentTitle').text(data.assignmentTitle);
+                $('#studentName').text(data.studentName);
+                $('#submissionContent').html(data.submissionContent || '<em>No content submitted</em>');
+                $('#submittedAt').text(new Date(data.submittedAt).toLocaleString());
+                $('#maxScore').text(data.maxScore);
+                $('#score').attr('max', data.maxScore);
+
+                // Load attached files
+                if (data.attachedFiles && data.attachedFiles.length > 0) {
+                    const filesHtml = data.attachedFiles.map(file =>
+                        `<a href="/uploads/assignments/${file}" class="btn btn-outline-primary btn-sm me-2 mb-2" target="_blank">
+                            <i class="fas fa-download"></i> ${file}
+                        </a>`
+                    ).join('');
+                    $('#attachedFiles').html(filesHtml);
+                } else {
+                    $('#attachedFiles').html('<em>No files attached</em>');
+                }
+
+                // Set current grade if exists
+                if (data.score !== null) {
+                    $('#score').val(data.score);
+                    $('#feedback').val(data.feedback || '');
+                    calculateGrade();
+                }
+            })
+            .fail(function() {
+                showToast('Error loading assignment', 'error');
+            });
+    }
+
+    function calculateGrade() {
+        const score = parseFloat($('#score').val()) || 0;
+        const maxScore = parseFloat($('#maxScore').text()) || 100;
+
+        const percentage = (score / maxScore * 100).toFixed(1);
+        $('#percentage').val(percentage);
+
+        // Calculate letter grade
+        let letterGrade = 'F';
+        if (percentage >= 90) letterGrade = 'A';
+        else if (percentage >= 80) letterGrade = 'B';
+        else if (percentage >= 70) letterGrade = 'C';
+        else if (percentage >= 60) letterGrade = 'D';
+
+        $('#grade').val(letterGrade);
+
+        // Update grade color
+        const gradeInput = $('#grade');
+        gradeInput.removeClass('text-success text-warning text-danger');
+        if (percentage >= 80) gradeInput.addClass('text-success');
+        else if (percentage >= 60) gradeInput.addClass('text-warning');
+        else gradeInput.addClass('text-danger');
+    }
+</script>

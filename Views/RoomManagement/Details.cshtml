@@ -1,0 +1,52 @@
+@model Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.Facilities.Room
+
+@{
+    ViewData["Title"] = "Chi tiết Phòng học";
+}
+
+<div class="container mt-4 animate__animated animate__fadeIn">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white d-flex align-items-center">
+            <i class="fas fa-door-open fa-lg me-2"></i>
+            <h3 class="mb-0">Chi tiết phòng học</h3>
+        </div>
+        <div class="card-body">
+            <div class="row mb-3 g-3">
+                <div class="col-md-3 col-6">
+                    <strong>Tên phòng:</strong> <span>@Model.Name</span>
+                </div>
+                <div class="col-md-2 col-6">
+                    <strong>Mã phòng:</strong> <span>@Model.id</span>
+                </div>
+                <div class="col-md-2 col-6">
+                    <strong>Sức chứa:</strong> <span>@Model.Capacity</span>
+                </div>
+                <div class="col-md-2 col-6">
+                    <strong>Loại phòng:</strong> <span class="badge bg-info text-dark">@Html.DisplayFor(m => m.Type)</span>
+                </div>
+                <div class="col-md-2 col-6">
+                    <strong>Vị trí:</strong> <span>@Model.Location</span>
+                </div>
+                <div class="col-md-1 col-6">
+                    <strong>Trạng thái:</strong>
+                    @if (Model.IsActive)
+                    {
+                        <span class="badge bg-success">Đang hoạt động</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">Tạm ngưng</span>
+                    }
+                </div>
+            </div>
+            <div class="mb-3">
+                <strong>Mô tả:</strong>
+                <div class="border rounded p-2 bg-light">@Model.Description</div>
+            </div>
+        </div>
+        <div class="card-footer text-end">
+            <a asp-action="Edit" asp-route-id="@Model.id" class="btn btn-warning me-2"><i class="fas fa-edit"></i> Sửa</a>
+            <a asp-action="Index" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Quay lại danh sách</a>
+        </div>
+    </div>
+</div> 

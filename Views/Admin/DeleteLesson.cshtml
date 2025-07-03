@@ -1,0 +1,44 @@
+@model Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.Learning.Lesson
+@{
+    ViewData["Title"] = "Xác nhận xóa buổi học";
+    var hasAssignments = Model.Assignments != null && Model.Assignments.Any();
+}
+<h2 class="mb-4 text-danger"><i class="fas fa-trash-alt me-2"></i>Xác nhận xóa buổi học</h2>
+<div class="alert alert-warning">
+    <strong>Bạn có chắc chắn muốn xóa buổi học này?</strong>
+    <br />Hành động này không thể hoàn tác.
+    @if (hasAssignments)
+    {
+        <div class="mt-2 alert alert-danger">
+            <i class="fas fa-exclamation-triangle me-1"></i>
+            Buổi học này còn <b>@Model.Assignments.Count()</b> bài tập liên quan. Nếu tiếp tục xóa, toàn bộ bài tập này cũng sẽ bị xóa vĩnh viễn!
+        </div>
+    }
+</div>
+<div class="card mb-4">
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3">Tên buổi học</dt>
+            <dd class="col-sm-9">@Model.Title</dd>
+            <dt class="col-sm-3">Ngày học</dt>
+            <dd class="col-sm-9">@Model.ScheduledDate.ToString("dd/MM/yyyy")</dd>
+            <dt class="col-sm-3">Nội dung</dt>
+            <dd class="col-sm-9">@Model.Content</dd>
+
+        </dl>
+    </div>
+</div>
+<form asp-action="DeleteLesson" method="post">
+    <input type="hidden" asp-for="id" />
+    @if (Model.Assignments != null && Model.Assignments.Any())
+    {
+        <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" id="confirmDeleteAssignments" name="confirmDeleteAssignments" value="true" required />
+            <label class="form-check-label text-danger" for="confirmDeleteAssignments">
+                Tôi hiểu và vẫn muốn xóa tất cả bài tập liên quan
+            </label>
+        </div>
+    }
+    <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt me-1"></i> Xác nhận xóa</button>
+    <a asp-action="Lessons" class="btn btn-secondary ms-2">Hủy</a>
+</form> 

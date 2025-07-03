@@ -1,0 +1,40 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.Identity.ApplicationUser> UserManager
+@inject SignInManager<Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.Identity.ApplicationUser> SignInManager
+@{
+    ViewData["Title"] = "EduCenter-Auth";
+    var user = await UserManager.GetUserAsync(User);
+    var roles = user != null ? await UserManager.GetRolesAsync(user) : new List<string>();
+    var roleDisplay = roles.Count > 0 ? roles[0] : "Chưa phân quyền";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/AuthLayout.css" asp-append-version="true" />
+    
+</head>
+<body>
+    @RenderBody()
+
+    <!-- Back to home link -->
+    <div class="position-fixed top-0 start-0 p-3">
+        <a href="@Url.Action("Index", "Home")" class="btn btn-outline-light btn-sm">
+            <i class="fas fa-arrow-left me-2"></i>Back to Home
+        </a>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

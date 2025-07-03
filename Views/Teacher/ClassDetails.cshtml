@@ -1,0 +1,101 @@
+@model Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.ViewModel.Class.TeacherClassDetailsViewModel
+@{
+    ViewData["Title"] = "Chi tiết lớp học";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Chi tiết lớp học: @Model.Class.Name</h4>
+            <a href="@Url.Action("MyClasses", "Teacher")" class="btn btn-light btn-sm">
+                <i class="fas fa-arrow-left"></i> Quay lại danh sách
+            </a>
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <p><strong>Khóa học:</strong> @Model.Class.Course.Name</p>
+                    <p><strong>Phòng học:</strong> @Model.Class.Room?.Name</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Lịch học:</strong> @Model.Class.Schedule</p>
+                    <p><strong>Trạng thái:</strong> <span class="badge bg-success">@Model.Class.Status</span></p>
+                </div>
+            </div>
+
+            <ul class="nav nav-tabs" id="classDetailsTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="students-tab" data-bs-toggle="tab" data-bs-target="#students" type="button" role="tab" aria-controls="students" aria-selected="true">
+                        <i class="fas fa-user-graduate me-1"></i> Danh sách học viên (@Model.Students.Count)
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="lessons-tab" data-bs-toggle="tab" data-bs-target="#lessons" type="button" role="tab" aria-controls="lessons" aria-selected="false">
+                        <i class="fas fa-chalkboard-teacher me-1"></i> Buổi học (@Model.Lessons.Count)
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="classDetailsTabContent">
+                <!-- Students Tab -->
+                <div class="tab-pane fade show active" id="students" role="tabpanel" aria-labelledby="students-tab">
+                    <div class="table-responsive mt-3">
+                        <table class="table table-bordered table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Họ tên</th>
+                                    <th>Email</th>
+                                    <th>Số điện thoại</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{ int studentCount = 1; }
+                                @foreach (var student in Model.Students)
+                                {
+                                    <tr>
+                                        <td>@(studentCount++)</td>
+                                        <td>@student.User.FullName</td>
+                                        <td>@student.User.Email</td>
+                                        <td>@student.User.PhoneNumber</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Lessons Tab -->
+                <div class="tab-pane fade" id="lessons" role="tabpanel" aria-labelledby="lessons-tab">
+                     <div class="table-responsive mt-3">
+                        <table class="table table-bordered table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Tiêu đề</th>
+                                    <th>Ngày</th>
+                                    <th>Thời gian</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var lesson in Model.Lessons)
+                                {
+                                    <tr>
+                                        <td>@lesson.Title</td>
+                                        <td>@lesson.ScheduledDate.ToString("dd/MM/yyyy")</td>
+                                        <td>
+                                            @lesson.ScheduledDate.ToString("HH:mm")
+                                            @if (lesson.Duration != null)
+                                            {
+                                                <span>- @lesson.ScheduledDate.Add(lesson.Duration.Value).ToString("HH:mm")</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

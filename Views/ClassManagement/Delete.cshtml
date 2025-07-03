@@ -1,0 +1,46 @@
+@model Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.Courses.Classroom
+
+@{ 
+    ViewData["Title"] = "Xóa lớp học";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-danger text-white">
+            <h2 class="card-title mb-0">Xác nhận xóa lớp học</h2>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-warning mt-3">
+                <strong>Lưu ý:</strong> Khi xóa lớp học này, <b>tất cả các dữ liệu liên quan như bài học, bài tập, điểm danh, giáo viên, học viên</b> sẽ bị xóa vĩnh viễn. Hành động này không thể hoàn tác!<br/>
+                Nếu bạn xác nhận xóa, toàn bộ dữ liệu liên quan sẽ bị xóa. Nếu bạn nhấn hủy, sẽ không có dữ liệu nào bị xóa.
+            </div>
+            <h3 class="text-danger">Bạn có chắc chắn muốn xóa lớp học này không?</h3>
+            <p class="text-muted">Hành động này không thể hoàn tác.</p>
+            <hr />
+            <dl class="row">
+                <dt class="col-sm-3">Tên lớp học:</dt>
+                <dd class="col-sm-9">@Model.Name</dd>
+
+                <dt class="col-sm-3">Phòng học:</dt>
+                <dd class="col-sm-9">@Model.Room?.Name (@Model.Room?.id)</dd>
+
+                <dt class="col-sm-3">Ngày bắt đầu:</dt>
+                <dd class="col-sm-9">@Model.StartDate.ToString("dd/MM/yyyy")</dd>
+
+                <dt class="col-sm-3">Ngày kết thúc:</dt>
+                <dd class="col-sm-9">@Model.EndDate.ToString("dd/MM/yyyy")</dd>
+
+                <dt class="col-sm-3">Trạng thái:</dt>
+                <dd class="col-sm-9">@Model.Status.ToString()</dd>
+            </dl>
+
+            <form asp-action="Delete" method="post">
+                <input type="hidden" asp-for="id" />
+                <div class="form-group mt-3 text-end">
+                    <button type="submit" class="btn btn-danger">Xóa</button>
+                    <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div> 

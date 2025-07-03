@@ -1,0 +1,182 @@
+﻿<div class="modal fade" id="attendanceModal" tabindex="-1" aria-labelledby="attendanceModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="attendanceModalLabel">
+                    <i class="fas fa-clipboard-check"></i> Mark Attendance
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="attendanceForm" method="post" asp-action="MarkAttendance">
+                    <input type="hidden" id="lessonId" name="lessonId" />
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Date:</label>
+                            <input type="date" class="form-control" id="attendanceDate" name="attendanceDate" value="@DateTime.Today.ToString("yyyy-MM-dd")" readonly />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Class:</label>
+                            <input type="text" class="form-control" id="className" readonly />
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Student</th>
+                                    <th>Status</th>
+                                    <th>Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentAttendanceList">
+                                <!-- Students will be loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="attendance-summary mt-3">
+                        <div class="row text-center">
+                            <div class="col-md-3">
+                                <div class="card bg-success text-white">
+                                    <div class="card-body">
+                                        <h4 id="presentCount">0</h4>
+                                        <small>Present</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card bg-danger text-white">
+                                    <div class="card-body">
+                                        <h4 id="absentCount">0</h4>
+                                        <small>Absent</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card bg-warning text-white">
+                                    <div class="card-body">
+                                        <h4 id="lateCount">0</h4>
+                                        <small>Late</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card bg-info text-white">
+                                    <div class="card-body">
+                                        <h4 id="excusedCount">0</h4>
+                                        <small>Excused</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button type="submit" form="attendanceForm" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Save Attendance
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        // Load students when modal opens
+        $('#attendanceModal').on('show.bs.modal', function(event) {
+            const button = $(event.relatedTarget);
+            const lessonId = button.data('lesson-id');
+            const className = button.data('class-name');
+
+            $('#lessonId').val(lessonId);
+            $('#className').val(className);
+
+            loadStudentsForAttendance(lessonId);
+        });
+
+        // Update counts when status changes
+        $(document).on('change', '.attendance-status', function() {
+            updateAttendanceCounts();
+        });
+
+        // Quick mark all buttons
+        $('.quick-mark').on('click', function() {
+            const status = $(this).data('status');
+            $('.attendance-status').val(status);
+            updateAttendanceCounts();
+        });
+    });
+
+    function loadStudentsForAttendance(lessonId) {
+        $.get(`/api/Teacher/GetClassStudents/${lessonId}`)
+            .done(function(students) {
+                const tbody = $('#studentAttendanceList');
+                tbody.empty();
+
+                students.forEach(function(student, index) {
+                    const row = `
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img src="${student.avatar || '/images/default-avatar.png'}"
+                                         class="rounded-circle me-2" width="40" height="40" alt="Avatar">
+                                    <div>
+                                        <strong>${student.fullName}</strong><br>
+                                        <small class="text-muted">${student.studentCode}</small>
+                                    </div>
+                                </div>
+                                <input type="hidden" name="attendanceRecords[${index}].StudentId" value="${student.id}" />
+                                <input type="hidden" name="attendanceRecords[${index}].ClassId" value="${student.classId}" />
+                            </td>
+                            <td>
+                                <select class="form-select attendance-status" name="attendanceRecords[${index}].Status">
+                                    <option value="1" selected>Present</option>
+                                    <option value="2">Absent</option>
+                                    <option value="3">Late</option>
+                                    <option value="4">Excused</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="attendanceRecords[${index}].Notes"
+                                       placeholder="Optional notes" />
+                            </td>
+                        </tr>
+                    `;
+                    tbody.append(row);
+                });
+
+                updateAttendanceCounts();
+            })
+            .fail(function() {
+                showToast('Error loading students', 'error');
+            });
+    }
+
+    function updateAttendanceCounts() {
+        const statuses = {
+            1: 'presentCount',    // Present
+            2: 'absentCount',     // Absent
+            3: 'lateCount',       // Late
+            4: 'excusedCount'     // Excused
+        };
+
+        // Reset counts
+        Object.values(statuses).forEach(id => $(`#${id}`).text('0'));
+
+        // Count each status
+        $('.attendance-status').each(function() {
+            const status = parseInt($(this).val());
+            const countId = statuses[status];
+            if (countId) {
+                const currentCount = parseInt($(`#${countId}`).text());
+                $(`#${countId}`).text(currentCount + 1);
+            }
+        });
+    }
+</script>

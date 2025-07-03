@@ -1,0 +1,247 @@
+@using Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.Enums
+@using Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.ViewModel.Dashboard
+@model AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Bảng điều khiển</h1>
+</div>
+
+<div class="mb-3 d-flex gap-2">
+    <a href="@Url.Action("Lessons", "Admin")" class="btn btn-primary"><i class="fas fa-calendar-alt me-1"></i> Quản lý buổi học</a>
+    <a href="@Url.Action("CreateLesson", "Admin")" class="btn btn-success"><i class="fas fa-plus me-1"></i> Tạo buổi học</a>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Tổng số học viên
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalStudents</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-users fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Tổng số giáo viên
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalTeachers</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-chalkboard-teacher fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                            Lớp đang hoạt động
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.ActiveClasses</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-book-open fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                            Doanh thu tháng
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">$@Model.MonthlyRevenue.ToString("N2")</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row -->
+<div class="row mb-4">
+    <div class="col-xl-8 col-lg-7">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Tổng quan doanh thu</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-area">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-4 col-lg-5">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Phân bố khóa học</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-pie pt-4 pb-2">
+                    <canvas id="courseChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Content Row -->
+<div class="row">
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Ghi danh gần đây</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Học viên</th>
+                                <th>Khóa học</th>
+                                <th>Ngày</th>
+                                <th>Trạng thái</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var enrollment in Model.RecentEnrollments)
+                            {
+                                <tr>
+                                    <td>@enrollment.Student.User.FullName</td>
+                                    <td>@enrollment.Course.Name</td>
+                                    <td>@enrollment.EnrollmentDate.ToString("dd/MM/yyyy")</td>
+                                    <td>
+                                        <span class="badge badge-@(enrollment.Status == EnrollmentStatus.Studying ? "success" : "warning")">
+                                            @(enrollment.Status == EnrollmentStatus.Studying ? "Đang học" : "Hoàn thành")
+                                        </span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Lịch hôm nay</h6>
+            </div>
+            <div class="card-body">
+                @if (Model.ClassSchedule.Any())
+                {
+                    @foreach (var schedule in Model.ClassSchedule)
+                    {
+                        <div class="schedule-item mb-3 p-3 border rounded">
+                            <h6 class="mb-1">@schedule.ClassName</h6>
+                            <p class="mb-1 text-muted">@schedule.CourseTitle</p>
+                            <small class="text-muted">
+                                <i class="fas fa-map-marker-alt"></i> @schedule.RoomName |
+                                <i class="fas fa-user"></i> @schedule.TeacherName |
+                                <i class="fas fa-users"></i> @schedule.StudentCount học viên
+                            </small>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="text-muted">Không có lớp nào trong hôm nay.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Revenue Chart
+        const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+        const revenueChart = new Chart(revenueCtx, {
+            type: 'line',
+            data: {
+                labels: ['Th1', 'Th2', 'Th3', 'Th4', 'Th5', 'Th6'],
+                datasets: [{
+                    label: 'Doanh thu',
+                    data: [12000, 19000, 15000, 25000, 22000, 30000],
+                    borderColor: 'rgb(78, 115, 223)',
+                    backgroundColor: 'rgba(78, 115, 223, 0.1)',
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + value.toLocaleString();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Course Distribution Chart
+        const courseCtx = document.getElementById('courseChart').getContext('2d');
+        const courseChart = new Chart(courseCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Tiếng Anh', 'Tin học', 'Khác'],
+                datasets: [{
+                    data: [55, 30, 15],
+                    backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc'],
+                    hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf'],
+                    hoverBorderColor: 'rgba(234, 236, 244, 1)',
+                }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                },
+                cutout: '70%',
+            }
+        });
+    </script>
+}

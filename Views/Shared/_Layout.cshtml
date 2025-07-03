@@ -1,0 +1,227 @@
+@{
+    ViewData["Title"] = "Trung Tâm EduCenter";
+}
+
+@using Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.Communication
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.Identity.ApplicationUser> UserManager
+@inject SignInManager<Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.Identity.ApplicationUser> SignInManager
+@{
+    var user = await UserManager.GetUserAsync(User);
+    string roleDisplay = user?.Email ?? "Chưa đăng nhập";
+}
+
+<!DOCTYPE html>
+<html lang="vi" style="min-height: 100vh;">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData</title>
+
+    <!-- Thư viện CSS -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    <!-- Biểu tượng -->
+    <link rel="icon" type="image/x-icon" href="~/favicon.ico">
+</head>
+<body style="display: flex; flex-direction: column; min-height: 100vh;">
+    <!-- Thanh điều hướng -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top shadow">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" asp-area="" asp-controller="Home" asp-action="Index">
+                <i class="fas fa-graduation-cap me-2"></i>
+                Trung Tâm Edu
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Home" asp-action="Index">
+                            <i class="fas fa-home me-1"></i>Trang chủ
+                        </a>
+                    </li>
+
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        @if (User.IsInRole("Student"))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                    <i class="fas fa-user-graduate me-1"></i>Cổng sinh viên
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" asp-controller="Student" asp-action="Dashboard">Bảng tổng quan</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Student" asp-action="MyCourses">Khóa học</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Student" asp-action="Assignments">Bài tập</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Student" asp-action="Grades">Điểm số</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Student" asp-action="Schedule">Lịch học</a></li>
+                                </ul>
+                            </li>
+                        }
+
+                        @if (User.IsInRole("Teacher"))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                    <i class="fas fa-chalkboard-teacher me-1"></i>Giảng viên
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" asp-controller="Teacher" asp-action="MyClasses">Lớp học</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Teacher" asp-action="Gradebook">Sổ điểm</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Teacher" asp-action="Attendance">Điểm danh</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                </ul>
+                            </li>
+                        }
+
+                        @if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                    <i class="fas fa-cogs me-1"></i>Quản trị hệ thống
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" asp-controller="Admin" asp-action="Index">Bảng điều khiển</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" asp-controller="UserManagement" asp-action="Index">Quản lý người dùng</a></li>
+                                    <li><a class="dropdown-item" asp-controller="CourseManagement" asp-action="Index">Quản lý khóa học</a></li>
+                                    <li><a class="dropdown-item" asp-controller="ClassManagement" asp-action="Index">Quản lý lớp học</a></li>
+                                    <li><a class="dropdown-item" asp-controller="RoomManagement" asp-action="Index">Quản lý phòng học</a></li>
+                                    @* <li><a class="dropdown-item" asp-controller="Admin" asp-action="Lessons"><i class="fas fa-calendar-alt me-1"></i> Quản lý buổi học</a></li>
+                                    <li><a class="dropdown-item text-success fw-bold" asp-controller="Admin" asp-action="CreateLesson"><i class="fas fa-plus-circle me-1"></i> Tạo buổi học</a></li> *@
+                                    <li><hr class="dropdown-divider"></li>
+
+                                </ul>
+                            </li>
+                        }
+                    }
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-book me-1"></i>Khóa học
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="@Url.Action("Index", "Home", new { type = "Language" })">Ngoại ngữ</a></li>
+                            <li><a class="dropdown-item" href="@Url.Action("Index", "Home", new { type = "IT" })">Tin học</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" asp-controller="Home" asp-action="Index">Xem tất cả</a></li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <ul class="navbar-nav">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <!-- Thông báo -->
+                       @await Component.InvokeAsync("Notification")
+                    
+                        <!-- Tài khoản -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+                                <span class="fw-bold text-white">@roleDisplay</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                            
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Cài đặt</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                                        <button type="submit" class="dropdown-item">
+                                            <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
+                    
+                    }
+                    else
+                    {
+                        <partial name="_LoginPartial" />
+                    }
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Nội dung chính -->
+    <main class="flex-grow-1">
+        @RenderBody()
+    </main>
+
+    <!-- Chân trang -->
+    <footer class="bg-dark text-light py-5 mt-5 mt-auto">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5><i class="fas fa-graduation-cap me-2"></i>Trung Tâm Edu</h5>
+                    <p class="text-muted">Trao quyền tri thức thông qua giáo dục chất lượng về ngoại ngữ và công nghệ.</p>
+                </div>
+                <div class="col-md-4">
+                    <h6>Liên kết nhanh</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-light text-decoration-none">Giới thiệu</a></li>
+                        <li><a href="#" class="text-light text-decoration-none">Khóa học</a></li>
+                        <li><a href="#" class="text-light text-decoration-none">Liên hệ</a></li>
+                        <li><a asp-controller="Home" asp-action="Privacy" class="text-light text-decoration-none">Chính sách bảo mật</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h6>Thông tin liên hệ</h6>
+                    <ul class="list-unstyled text-muted">
+                        <li><i class="fas fa-map-marker-alt me-2"></i>123 Đường Giáo Dục, TP Học Tập</li>
+                        <li><i class="fas fa-phone me-2"></i>+84 123 456 789</li>
+                        <li><i class="fas fa-envelope me-2"></i>info@languageitcenter.com</li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="text-center">
+                <p class="mb-0">&copy; 2025 Trung Tâm Edu. Mọi quyền được bảo lưu.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Container hiển thị thông báo -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toast-container"></div>
+
+    <!-- Lớp phủ loading -->
+    <div id="loading-overlay" class="loading-overlay" style="display: none;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Đang tải...</span>
+        </div>
+    </div>
+
+    <!-- Thư viện JavaScript -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+    <script>
+        // Hiệu ứng cuộn mượt đến các section đặc biệt nếu có anchor trên URL
+        $(document).ready(function () {
+            if (window.location.hash === '#student-section' || window.location.hash === '#teacher-section') {
+                setTimeout(function () {
+                    const target = document.querySelector(window.location.hash);
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }, 300);
+            }
+        });
+    </script>
+</body>
+</html>

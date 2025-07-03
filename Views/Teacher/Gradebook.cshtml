@@ -1,0 +1,260 @@
+@model Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.ViewModel.TeacherViewModel.GradebookViewModel
+
+@{
+    ViewData["Title"] = "Sổ điểm";
+}
+
+<link rel="stylesheet" href="~/css/User_Management/index.css" />
+
+<div class="container-fluid py-4 bg-white animate__animated animate__fadeIn text-dark">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h2 class="fw-bold text-primary"><i class="fas fa-clipboard-list me-2"></i>Sổ điểm</h2>
+            <p class="text-muted">Quản lý điểm số các bài tập của học viên</p>
+        </div>
+        <div>
+            <a id="createAssignmentBtn" asp-action="CreateAssignment" class="btn btn-success btn-lg animate__pulse">
+                <i class="fas fa-plus"></i> Tạo bài tập
+            </a>
+        </div>
+    </div>
+    <div class="card shadow-sm bg-white text-dark">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="fas fa-list"></i> Danh sách điểm</h5>
+            <span class="badge bg-primary">@Model.Classes.Count lớp</span>
+        </div>
+        <div class="table-responsive">
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @TempData["ErrorMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            @if (TempData["InfoMessage"] != null)
+            {
+                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                    @TempData["InfoMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            @if (Model.Classes.Any())
+            {
+                <div class="d-flex align-items-center mb-3">
+                    <div class="form-group d-flex align-items-center mb-0">
+                        <label for="classSelect" class="me-2">Chọn lớp học:</label>
+                        <select id="classSelect" class="form-control" style="width:auto;">
+                            <option value="">-- Chọn lớp --</option>
+                            @foreach (var classroom in Model.Classes)
+                            {
+                                <option value="@classroom.id">@classroom.Name (@classroom.Course.Name)</option>
+                            }
+                        </select>
+                        <button id="exportExcelBtn" class="btn btn-success ms-2" style="display:none;">Xuất Excel</button>
+                    </div>
+                </div>
+
+                <div id="gradebookContent" class="mt-4">
+                    <p>Vui lòng chọn một lớp học để xem sổ điểm.</p>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-warning">
+                    <h5>Không có lớp học nào</h5>
+                    <p>Bạn chưa được gán vào lớp học nào. Vui lòng liên hệ quản trị viên để được gán lớp học.</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Chỉ chạy JavaScript nếu có lớp học
+            @if (Model.Classes.Any())
+            {
+                <text>
+                $('#classSelect').change(function () {
+                    var classId = $(this).val();
+                    if (classId) {
+                        $('#exportExcelBtn').show();
+                        $('#createAssignmentBtn').attr('href', '/Teacher/CreateAssignment?classId=' + classId);
+                        $.ajax({
+                            url: '/Teacher/GetGradesForClass',
+                            type: 'GET',
+                            data: { classId: classId },
+                            success: function (response) {
+                                if (response.success) {
+                                    displayGradebook(response.studentGrades);
+                                } else {
+                                    $('#gradebookContent').html('<div class="alert alert-danger">' + response.message + '</div>');
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                $('#gradebookContent').html('<div class="alert alert-danger">Đã xảy ra lỗi khi tải sổ điểm.</div>');
+                                console.error(xhr.responseText);
+                            }
+                        });
+                    } else {
+                        $('#exportExcelBtn').hide();
+                        $('#createAssignmentBtn').attr('href', '/Teacher/CreateAssignment');
+                        $('#gradebookContent').html('<p>Vui lòng chọn một lớp học để xem sổ điểm.</p>');
+                    }
+                });
+
+                $('#exportExcelBtn').click(function () {
+                    var classId = $('#classSelect').val();
+                    if (classId) {
+                        window.location = '/Teacher/ExportGradesToExcel?classId=' + classId;
+                    }
+                });
+
+                $(document).on('change', '.assignment-score-input', function () {
+                    var studentAssignmentId = $(this).data('student-assignment-id');
+                    var score = $(this).val();
+
+                    if (score === '' || isNaN(score) || score < 0 || score > 100) {
+                        alert('Điểm phải là một số từ 0 đến 100.');
+                        return;
+                    }
+
+                    $.ajax({
+                        url: '/Teacher/UpdateAssignmentScore',
+                        type: 'POST',
+                        data: {
+                            studentAssignmentId: studentAssignmentId,
+                            score: score,
+                            __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val() // Thêm token
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                // alert(response.message);
+                                // Có thể cập nhật UI nếu cần
+                            } else {
+                                alert(response.message);
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            alert('Đã xảy ra lỗi khi cập nhật điểm.');
+                            console.error(xhr.responseText);
+                        }
+                    });
+                });
+
+                function displayGradebook(studentGrades) {
+                    // Xóa các modal cũ để tránh trùng lặp ID
+                    $('.gradebook-modal').remove();
+
+                    if (studentGrades.length === 0) {
+                        $('#gradebookContent').html('<div class="alert alert-info">Không có học sinh nào trong lớp này hoặc chưa có bài tập được giao.</div>');
+                        return;
+                    }
+
+                    var tableHtml = '<table class="table table-bordered table-striped">';
+                    tableHtml += '<thead><tr><th>Học sinh</th>';
+
+                    var allAssignments = {};
+                    studentGrades.forEach(student => {
+                        student.assignments.forEach(assignment => {
+                            allAssignments[assignment.assignmentId] = assignment.assignmentTitle + ' (' + assignment.lessonTitle + ')';
+                        });
+                    });
+
+                    var sortedAssignmentIds = Object.keys(allAssignments).sort((a, b) => parseInt(a) - parseInt(b));
+                    sortedAssignmentIds.forEach(id => {
+                        tableHtml += '<th>' + allAssignments[id] + '</th>';
+                    });
+
+                    tableHtml += '</tr></thead><tbody>';
+
+                    var modals = '';
+                    var modalIndex = 0;
+                    studentGrades.forEach(student => {
+                        tableHtml += '<tr><td>' + student.studentName + '</td>';
+                        sortedAssignmentIds.forEach(assignmentId => {
+                            var assignment = student.assignments.find(a => a.assignmentId == assignmentId);
+                            if (assignment) {
+                                tableHtml += '<td>';
+                                if (assignment.status === 2 || assignment.status === 3) { // Đã nộp hoặc đã chấm
+                                    tableHtml += '<button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#modalSubmitted' + modalIndex + '">Xem bài nộp</button>';
+                                    
+                                    modals += '<div class="modal fade gradebook-modal" id="modalSubmitted' + modalIndex + '" tabindex="-1" aria-labelledby="modalSubmittedLabel' + modalIndex + '" aria-hidden="true">';
+                                    modals += '<div class="modal-dialog"><div class="modal-content">';
+                                    modals += '<div class="modal-header"><h5 class="modal-title" id="modalSubmittedLabel' + modalIndex + '">Bài đã nộp: ' + assignment.assignmentTitle + '</h5>';
+                                    modals += '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>';
+                                    modals += '<div class="modal-body">';
+                                    modals += '<div><strong>Nội dung:</strong></div>';
+                                    modals += '<div class="mb-2">' + (assignment.submissionContent || '(Không có)') + '</div>';
+                                    if (assignment.attachedFiles) {
+                                        var files = assignment.attachedFiles.split(';');
+                                        modals += '<div><strong>File đính kèm:</strong></div><ul>';
+                                        files.forEach(function(file) {
+                                            if (file) {
+                                                var urlPath = file.replace(/\\\\/g, '/');
+                                                var fileName = urlPath.split('/').pop();
+                                                modals += '<li><a href="/' + urlPath + '" target="_blank">' + fileName + '</a></li>';
+                                            }
+                                        });
+                                        modals += '</ul>';
+                                    }
+                                    modals += '<div><strong>Thời gian nộp:</strong> ' + (assignment.submittedAt ? new Date(assignment.submittedAt).toLocaleString() : '(Không có)') + '</div>';
+                                    modals += '<div class="mt-3"><label><strong>Chấm điểm:</strong></label>';
+                                    modals += '<div class="input-group"><input type="number" min="0" max="100" class="form-control modal-score-input" data-student-assignment-id="' + assignment.studentAssignmentId + '" value="' + (assignment.score !== null ? assignment.score : '') + '"><button class="btn btn-success save-score-btn" data-student-assignment-id="' + assignment.studentAssignmentId + '" data-bs-dismiss="modal">Lưu điểm</button></div></div>';
+                                    modals += '</div></div></div></div>';
+                                    modalIndex++;
+                                } else {
+                                    tableHtml += 'Chưa nộp';
+                                }
+                                tableHtml += '</td>';
+                            } else {
+                                tableHtml += '<td>-</td>';
+                            }
+                        });
+                        tableHtml += '</tr>';
+                    });
+
+                    tableHtml += '</tbody></table>';
+                    
+                    $('#gradebookContent').html(tableHtml);
+                    $('body').append(modals);
+
+                    // Sự kiện lưu điểm trong modal
+                    $('.save-score-btn').off('click').on('click', function () {
+                        var studentAssignmentId = $(this).data('student-assignment-id');
+                        var score = $(this).closest('.input-group').find('.modal-score-input').val();
+                        if (score === '' || isNaN(score) || score < 0 || score > 100) {
+                            alert('Điểm phải là một số từ 0 đến 100.');
+                            return;
+                        }
+                        $.ajax({
+                            url: '/Teacher/UpdateAssignmentScore',
+                            type: 'POST',
+                            data: {
+                                studentAssignmentId: studentAssignmentId,
+                                score: score,
+                                __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                            },
+                            success: function (response) {
+                                if (response.success) {
+                                    // Reload lại bảng điểm sau khi chấm
+                                    $('#classSelect').trigger('change');
+                                } else {
+                                    alert(response.message);
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                alert('Đã xảy ra lỗi khi cập nhật điểm.');
+                                console.error(xhr.responseText);
+                            }
+                        });
+                    });
+                }
+                </text>
+            }
+        });
+    </script>
+} 

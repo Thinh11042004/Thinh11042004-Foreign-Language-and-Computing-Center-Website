@@ -1,0 +1,177 @@
+@using Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.ViewModel.Dashboard
+@model StudentDashboardViewModel
+@{
+    ViewData["Title"] = "Bảng điều khiển";
+}
+
+<div class="container mt-4">
+    <!-- Welcome Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="p-4 rounded-3 bg-primary text-white">
+                <h2>Chào mừng quay trở lại, @Model.Student.User.FullName! 👋</h2>
+                <p>Sẵn sàng tiếp tục hành trình học tập của bạn chưa? Hãy xem hôm nay có gì nhé.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-book-open fa-3x text-primary mb-2"></i>
+                    <h5 class="card-title">@Model.ActiveEnrollments.Count()</h5>
+                    <p class="card-text text-muted">Khóa học đang hoạt động</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-tasks fa-3x text-warning mb-2"></i>
+                    <h5 class="card-title">@Model.PendingAssignments.Count()</h5>
+                    <p class="card-text text-muted">Bài tập cần làm</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-check-circle fa-3x text-success mb-2"></i>
+                    <h5 class="card-title">@Model.RecentGrades.Count(g => g.Score.HasValue && g.Score >= 50) / @Model.RecentGrades.Count()</h5>
+                    <p class="card-text text-muted">Điểm tốt</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-calendar-check fa-3x text-info mb-2"></i>
+                    <h5 class="card-title">@Model.OverallProgress.ToString("F0")%</h5>
+                    <p class="card-text text-muted">Tỉ lệ chuyên cần</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Schedule & Pending Assignments -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h4><i class="fas fa-calendar-alt me-2"></i>Lịch học hôm nay</h4>
+                </div>
+                <div class="card-body">
+                    @if (Model.TodayClasses != null && Model.TodayClasses.Any())
+                    {
+                        <ul class="list-group list-group-flush">
+                            @foreach (var c in Model.TodayClasses)
+                            {
+                                <li class="list-group-item"><strong>@c.Name</strong> - @c.CourseTitle (@c.Schedule)</li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p>Bạn không có lớp nào hôm nay.</p>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h4><i class="fas fa-hourglass-half me-2"></i>Bài tập sắp hết hạn</h4>
+                </div>
+                <div class="card-body">
+                    @if (Model.PendingAssignments != null && Model.PendingAssignments.Any())
+                    {
+                        <ul class="list-group list-group-flush">
+                            @foreach (var assignment in Model.PendingAssignments.OrderBy(a => a.DueDate))
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <a asp-action="SubmitAssignment" asp-route-assignmentId="@assignment.id">@assignment.Title</a>
+                                    <span class="badge bg-warning text-dark">Hạn: @assignment.DueDate.ToString("dd/MM")</span>
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p>Không có bài tập nào cần hoàn thành.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Grades -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h4><i class="fas fa-graduation-cap me-2"></i>Điểm số gần đây</h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>BÀI TẬP</th>
+                                    <th>KHÓA HỌC</th>
+                                    <th>ĐIỂM (%)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.RecentGrades != null && Model.RecentGrades.Any())
+                                {
+                                    @foreach (var grade in Model.RecentGrades)
+                                    {
+                                        <tr>
+                                            <td>@grade.Assignment.Title</td>
+                                            <td>@grade.Assignment.Lesson.Class.Course.Name</td>
+                                            <td>@(grade.Score.HasValue ? $"{grade.Score:F1}%" : "Chưa chấm")</td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="3" class="text-center">Chưa có điểm nào.</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Counter Animation
+        document.addEventListener('DOMContentLoaded', function () {
+            const counters = document.querySelectorAll('.counter');
+            counters.forEach(counter => {
+                const target = +counter.dataset.target;
+                let count = 0;
+                const step = target / 50;
+
+                const updateCount = () => {
+                    count += step;
+                    if (count < target) {
+                        counter.innerText = Math.ceil(count);
+                        requestAnimationFrame(updateCount);
+                    } else {
+                        counter.innerText = target;
+                    }
+                };
+                updateCount();
+            });
+        });
+    </script>
+}
+

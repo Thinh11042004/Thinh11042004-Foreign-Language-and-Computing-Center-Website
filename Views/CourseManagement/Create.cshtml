@@ -1,0 +1,77 @@
+@model Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.ViewModel.CourseViewModel.CreateCourseViewModel
+@using Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.Enums
+
+@{ 
+    ViewData["Title"] = "Tạo Khóa học mới";
+}
+
+<h1>Tạo Khóa học mới</h1>
+
+<h4>Khóa học</h4>
+<hr />
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Thông tin Khóa học</h6>
+    </div>
+    <div class="card-body">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Name" class="form-label">Tên khóa học</label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Description" class="form-label">Mô tả</label>
+                    <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label asp-for="Type" class="form-label">Loại khóa học</label>
+                    <select asp-for="Type" class="form-select" asp-items="Html.GetEnumSelectList<CourseType>()"></select>
+                    <span asp-validation-for="Type" class="text-danger"></span>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="Category" class="form-label">Thể loại</label>
+                    <input asp-for="Category" class="form-control" />
+                    <span asp-validation-for="Category" class="text-danger"></span>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="Level" class="form-label">Cấp độ</label>
+                    <select asp-for="Level" class="form-select" asp-items="Html.GetEnumSelectList<CourseLevel>()"></select>
+                    <span asp-validation-for="Level" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label asp-for="Fee" class="form-label">Học phí</label>
+                    <input asp-for="Fee" class="form-control" />
+                    <span asp-validation-for="Fee" class="text-danger"></span>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="DurationHours" class="form-label">Thời lượng (giờ)</label>
+                    <input asp-for="DurationHours" class="form-control" />
+                    <span asp-validation-for="DurationHours" class="text-danger"></span>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="MaxStudents" class="form-label">Số lượng học viên tối đa</label>
+                    <input asp-for="MaxStudents" class="form-control" />
+                    <span asp-validation-for="MaxStudents" class="text-danger"></span>
+                </div>
+            </div>
+  
+            <div class="form-group mt-3">
+                <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i> Tạo</button>
+                <a asp-action="Index" class="btn btn-secondary ms-2"><i class="fas fa-arrow-left me-1"></i> Quay lại danh sách</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

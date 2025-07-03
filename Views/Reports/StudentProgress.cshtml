@@ -1,0 +1,93 @@
+@model Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.ViewModel.Report.StudentProgressReportViewModel
+
+@{
+    ViewData["Title"] = "Báo cáo tiến độ học sinh";
+}
+
+<h1>Báo cáo tiến độ học sinh</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="StudentProgress" method="get" class="form-inline mb-4">
+            <div class="form-group mr-2">
+                <label for="courseId" class="sr-only">Chọn khóa học:</label>
+                <select id="courseId" name="courseId" class="form-control">
+                    <option value="">Tất cả khóa học</option>
+                    @* TODO: Populate with actual courses from ViewBag or Model.AvailableCourses *@
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Xem báo cáo</button>
+        </form>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <h5 class="card-title">Tổng số học sinh</h5>
+                <p class="card-text h3">@Model.TotalStudents</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <h5 class="card-title">Tiến độ trung bình</h5>
+                <p class="card-text h3">@Model.AverageProgress.ToString("F1")%</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <h5 class="card-title">Tỷ lệ hoàn thành khóa học</h5>
+                <p class="card-text h3">@Model.CompletionRate%</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Chi tiết tiến độ học sinh</h4>
+            </div>
+            <div class="card-body">
+                @if (Model.StudentProgresses != null && Model.StudentProgresses.Any())
+                {
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Học sinh</th>
+                                <th>Khóa học</th>
+                                <th>Mô-đun</th>
+                                <th>Tiến độ</th>
+                                <th>Điểm</th>
+                                <th>Ghi chú</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var progress in Model.StudentProgresses)
+                            {
+                                <tr>
+                                    <td>@progress.Student?.User?.FullName</td>
+                                    <td>@progress.Course?.Name</td>
+                                    <td>@progress.Module?.Title</td>
+                                    <td>@((progress.MaxScore > 0 ? (progress.CurrentScore / progress.MaxScore * 100) : 0).ToString("F1"))%</td>
+                                    <td>@progress.CurrentScore</td>
+                                    <td>@progress.Notes</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p>Không có dữ liệu tiến độ học sinh nào.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div> 

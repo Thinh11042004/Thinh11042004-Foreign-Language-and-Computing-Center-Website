@@ -1,0 +1,95 @@
+@using Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.Enums
+@model Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.ViewModel.Student.StudentListViewModel
+
+@{
+    ViewData["Title"] = $"Học viên đăng ký - {Model.Course?.Name}";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h2 class="card-title mb-0">Danh sách học viên đăng ký khóa học: @Model.Course?.Name</h2>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Họ tên</th>
+                        <th>Email</th>
+                        <th>Điện thoại</th>
+                        <th>Trạng thái</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.StudentEnrollment != null && Model.StudentEnrollment.Any())
+                    {
+                        int stt = 1;
+                        foreach (var student in Model.StudentEnrollment)
+                        {
+                            <tr>
+                                <td>@stt</td>
+                                <td>@student.FullName</td>
+                                <td>@student.Email</td>
+                                <td>@student.PhoneNumber</td>
+                                <td>
+                                    @switch (student.RegistrationStatus)
+                                    {
+                                        case RegistrationStatus.Pending:
+                                            <span class="text-warning">Chờ xếp lớp</span>
+                                            break;
+                                        case RegistrationStatus.Enrolled:
+                                            <span class="text-success">Đã xếp lớp</span>
+                                            break;
+                                        case RegistrationStatus.Cancelled:
+                                            <span class="text-danger">Đã hủy</span>
+                                            break;
+                                    }
+                                </td>
+                                <td>
+                                    @if (student.RegistrationStatus == RegistrationStatus.Pending)
+                                    {
+                                       <form asp-controller="CourseManagement" asp-action="Approve" method="post" class="d-inline">
+                                            <input type="hidden" name="enrollmentId" value="@student.EnrollmentId" />
+                                            <button type="submit" class="btn btn-success btn-sm">Duyệt</button>
+                                        </form>
+
+                                        <form asp-controller="CourseManagement" asp-action="Cancel" method="post" class="d-inline">
+                                            <input type="hidden" name="enrollmentId" value="@student.EnrollmentId" />
+                                            <button type="submit" class="btn btn-danger btn-sm">Hủy</button>
+                                        </form>
+                                    }
+                                    else if (student.RegistrationStatus == RegistrationStatus.WaitingForClass)
+                                    {
+                                        <a asp-action="AssignClass" asp-route-enrollmentId="@student.EnrollmentId" class="btn btn-primary btn-sm">Phân lớp</a>
+                                    }
+                                    else if (student.RegistrationStatus == RegistrationStatus.Enrolled)
+                                    {
+                                        <span class="text-success">Đã xếp lớp</span>
+                                    }
+                                    else if (student.RegistrationStatus == RegistrationStatus.Cancelled)
+                                    {
+                                        <span class="text-danger">Đã hủy</span>
+                                    }
+
+                                    <a asp-action="EditStudent" asp-route-courseId="@Model.Course?.id" asp-route-studentId="@student.StudentId" class="btn btn-warning btn-sm">Sửa</a>
+                                    <a asp-action="DeleteStudent" asp-route-courseId="@Model.Course?.id" asp-route-studentId="@student.StudentId" class="btn btn-danger btn-sm">Xóa</a>
+                                </td>
+                            </tr>
+                            stt++;
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center">Chưa có học viên đăng ký</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <a asp-action="Index" class="btn btn-secondary mt-3">Quay lại danh sách khóa học</a>
+        </div>
+    </div>
+</div>

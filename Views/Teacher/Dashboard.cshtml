@@ -1,0 +1,116 @@
+@model Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.ViewModel.TeacherViewModel.TeacherMainDashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard Giáo viên";
+}
+
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h2>Chào mừng, @Model.Teacher?.User?.FullName!</h2>
+            <p><strong>Mã nhân viên:</strong> @Model.Teacher?.EmployeeCode</p>
+            <p><strong>Chuyên môn:</strong> @(string.IsNullOrEmpty(Model.Teacher?.Specialization) ? "Chưa cập nhật" : Model.Teacher.Specialization)</p>
+            <p><strong>Lĩnh vực giảng dạy:</strong> @(string.IsNullOrEmpty(Model.Teacher?.SubjectAreas) ? "Chưa cập nhật" : Model.Teacher.SubjectAreas)</p>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-header">Lớp đang dạy</div>
+                <div class="card-body">
+                    <h5 class="card-title">@(Model.ActiveClasses?.Count() ?? 0)</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-header">Lớp học hôm nay</div>
+                <div class="card-body">
+                    <h5 class="card-title">@(Model.TodayClasses?.Count() ?? 0)</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-header">Bài tập cần chấm</div>
+                <div class="card-body">
+                    <h5 class="card-title">@(Model.PendingAssignments?.Count() ?? 0)</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card mb-3">
+                <div class="card-header bg-info text-white">Lớp học hôm nay</div>
+                <div class="card-body">
+                    @if (Model.TodayClasses != null && Model.TodayClasses.Any())
+                    {
+                        <ul class="list-group">
+                            @foreach (var c in Model.TodayClasses)
+                            {
+                                <li class="list-group-item">
+                                    <strong>@c.Name</strong> - @c.Course?.Name <br />
+                                    <span>Lịch: @c.Schedule</span>
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p>Không có lớp học nào hôm nay.</p>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card mb-3">
+                <div class="card-header bg-warning text-dark">Bài tập cần chấm</div>
+                <div class="card-body">
+                    @if (Model.PendingAssignments != null && Model.PendingAssignments.Any())
+                    {
+                        <ul class="list-group">
+                            @foreach (var a in Model.PendingAssignments)
+                            {
+                                <li class="list-group-item">
+                                    <strong>@a.Assignment?.Title</strong> - Học viên: @a.Student?.User?.FullName <br />
+                                    <span>Ngày nộp: @a.SubmittedAt.ToString("dd/MM/yyyy HH:mm")</span>
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p>Không có bài tập nào cần chấm.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card mb-3">
+                <div class="card-header bg-secondary text-white">Đánh giá gần đây</div>
+                <div class="card-body">
+                    @if (Model.RecentRatings != null && Model.RecentRatings.Any())
+                    {
+                        <ul class="list-group">
+                            @foreach (var r in Model.RecentRatings)
+                            {
+                                <li class="list-group-item">
+                                    <strong>@r.Student?.User?.FullName</strong> - Lớp: @r.Class?.Name - Khóa: @r.Class?.Course?.Name <br />
+                                    <span>Điểm: @r.Rating | Nhận xét: @r.Comment</span> <br />
+                                    <span>Ngày: @r.CreatedAt.ToString("dd/MM/yyyy HH:mm")</span>
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p>Chưa có đánh giá nào gần đây.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

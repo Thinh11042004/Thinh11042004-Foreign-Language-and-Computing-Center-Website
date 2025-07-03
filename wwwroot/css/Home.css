@@ -1,0 +1,269 @@
+﻿
+/*File Home.css*/
+
+:root {
+    --color-1: #F4EEFF; /* Màu tím nhạt nhất */
+    --color-2: #DCD6F7; /* Màu tím nhạt */
+    --color-3: #A6B1E1; /* Màu xanh tím */
+    --color-4: #424874; /* Màu tím đậm */
+}
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    /* Thiết lập font chữ cho body */
+    background-color: #ffffff;
+    /* Màu nền trắng cho body */
+}
+
+.header{
+    margin-bottom: 80px;
+}
+
+/* Header/Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, var(--color-3) 0%, var(--color-4) 100%);
+    /* Màu nền gradient cho hero-section */
+    color: white;
+    /* Màu chữ trắng */
+    padding: 130px 0 80px;
+    /* Padding trên và dưới cho hero-section */
+    text-align: center;
+    /* Căn giữa nội dung */
+}
+
+    .hero-section h1 {
+        font-size: 2.5rem;
+        /* Kích thước font của tiêu đề */
+        font-weight: bold;
+        /* Đặt chữ đậm cho tiêu đề */
+        margin-bottom: 20px;
+        /* Khoảng cách dưới cho tiêu đề */
+    }
+
+/* Buttons */
+.btn-primary-custom {
+    background-color: var(--color-4);
+    /* Màu nền của nút chính */
+    border: none;
+    /* Loại bỏ viền */
+    color: white;
+    /* Màu chữ trắng */
+    padding: 12px 30px;
+    /* Padding cho nút */
+    font-weight: 500;
+    /* Đặt độ đậm cho font chữ */
+    border-radius: 25px;
+    /* Bo tròn các góc của nút */
+    transition: all 0.3s;
+    /* Thêm hiệu ứng chuyển tiếp */
+}
+
+
+    .btn-primary-custom:hover {
+        background-color: var(--color-3);
+        /* Thay đổi màu nền khi hover */
+        transform: translateY(-2px);
+        /* Di chuyển nhẹ nút lên khi hover */
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        /* Thêm đổ bóng khi hover */
+    }
+
+.btn-secondary-custom {
+    background-color: white;
+    /* Màu nền trắng */
+    border: 2px solid white;
+    /* Đặt viền trắng cho nút */
+    color: var(--color-4);
+    /* Màu chữ tím đậm */
+    padding: 12px 30px;
+    /* Padding cho nút */
+    font-weight: 500;
+    /* Đặt độ đậm cho font chữ */
+    border-radius: 25px;
+    /* Bo tròn các góc của nút */
+    transition: all 0.3s;
+    /* Thêm hiệu ứng chuyển tiếp */
+}
+    .btn-secondary-custom:hover {
+        background-color: transparent;
+        /* Thay đổi nền thành trong suốt khi hover */
+        color: white;
+        /* Màu chữ trắng khi hover */
+    }
+
+/* Cards */
+.course-card {
+    background: white;
+    /* Màu nền trắng cho các card */
+    border-radius: 15px;
+    /* Bo tròn các góc của card */
+    padding: 30px;
+    /* Padding cho card */
+    text-align: center;
+    /* Căn giữa văn bản trong card */
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    /* Thêm đổ bóng nhẹ cho card */
+    transition: all 0.3s;
+    /* Thêm hiệu ứng chuyển tiếp */
+    height: 100%;
+    /* Chiều cao của card */
+    border: 2px solid transparent;
+    /* Viền trong suốt */
+}
+
+    .course-card:hover {
+        transform: translateY(-10px);
+        /* Di chuyển card lên khi hover */
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        /* Thêm đổ bóng mạnh hơn khi hover */
+        border-color: var(--color-3);
+        /* Đổi màu viền khi hover */
+    }
+
+    .course-card i {
+        font-size: 3rem;
+        /* Kích thước icon trong card */
+        color: var(--color-4);
+        /* Màu icon tím đậm */
+        margin-bottom: 20px;
+        /* Khoảng cách dưới icon */
+    }
+
+    .course-card h4 {
+        color: var(--color-4);
+        /* Màu tiêu đề của card */
+        margin-bottom: 15px;
+        /* Khoảng cách dưới tiêu đề */
+    }
+
+/* Sections */
+.section-light {
+    background-color: var(--color-1);
+    /* Màu nền sáng cho các section */
+    padding: 60px 0;
+    /* Padding trên và dưới cho các section */
+}
+
+.section-white {
+    background-color: white;
+    /* Màu nền trắng cho các section */
+    padding: 60px 0;
+    /* Padding trên và dưới cho các section */
+}
+
+.section-title {
+    text-align: center;
+    /* Căn giữa tiêu đề section */
+    font-size: 2rem;
+    /* Kích thước font cho tiêu đề section */
+    color: var(--color-4);
+    /* Màu chữ tím đậm */
+    margin-bottom: 50px;
+    /* Khoảng cách dưới cho tiêu đề */
+    font-weight: bold;
+    /* Đặt chữ đậm cho tiêu đề */
+}
+.animate__delay-0_5s {
+    animation-delay: 0.5s 
+}
+
+.animate__delay-1_5s {
+    animation-delay: 1.5s 
+}
+
+
+
+
+/* Features */
+.feature-box {
+    text-align: center;
+    /* Căn giữa nội dung các box tính năng */
+    padding: 20px;
+    /* Padding cho tính năng */
+}
+
+    .feature-box i {
+        font-size: 2.5rem;
+        /* Kích thước icon tính năng */
+        color: var(--color-3);
+        /* Màu icon xanh tím */
+        margin-bottom: 15px;
+        /* Khoảng cách dưới icon */
+    }
+
+    .feature-box h5 {
+        color: var(--color-4);
+        /* Màu tiêu đề tính năng */
+        margin-bottom: 10px;
+        /* Khoảng cách dưới tiêu đề tính năng */
+    }
+
+/* Statistics Box */
+.stat-box {
+    text-align: center;
+    padding: 30px;
+    background-color: white;
+    /* Màu nền trắng cho các hộp thống kê */
+    border-radius: 10px;
+    /* Bo tròn các góc của các hộp */
+    margin: 10px;
+    /* Khoảng cách giữa các box */
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
+    /* Đổ bóng nhẹ cho các hộp */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* Thêm hiệu ứng chuyển động cho hộp */
+}
+
+    .stat-box:hover {
+        transform: translateY(-10px);
+        /* Di chuyển lên khi hover */
+        box-shadow: 10px 6px 20px rgba(0, 0, 0, 0.5);
+        /* Đổ bóng mạnh hơn khi hover */
+    }
+
+.stat-number {
+    font-size: 3rem;
+    /* Kích thước chữ lớn cho các số liệu */
+    font-weight: bold;
+    /* Đặt chữ đậm cho các số liệu */
+    color: var(--color-4);
+    /* Màu chữ tím đậm */
+}
+
+.stat-label {
+    color: var(--color-3);
+    /* Màu chữ xanh tím cho nhãn */
+    font-weight: 500;
+    /* Đặt độ đậm vừa cho nhãn */
+    margin-top: 10px;
+    /* Khoảng cách giữa số liệu và nhãn */
+}
+
+/* Footer */
+footer {
+    background-color: var(--color-4);
+    /* Màu nền tím đậm cho footer */
+    color: white;
+    /* Màu chữ trắng */
+    padding: 40px 0 20px;
+    /* Padding cho footer */
+}
+
+    footer a {
+        color: var(--color-2);
+        /* Màu chữ tím nhạt cho liên kết */
+        text-decoration: none;
+        /* Loại bỏ gạch dưới của liên kết */
+    }
+
+        footer a:hover {
+            color: white;
+            /* Màu chữ trắng khi hover vào liên kết */
+        }

@@ -1,0 +1,121 @@
+@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Đăng nhập";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<style>
+    .split-auth-container {
+        min-height: 100vh;
+        display: flex;
+        align-items: stretch;
+        background: #f8f9fa;
+    }
+    .split-auth-left {
+        background: linear-gradient(135deg, #1de9b6 0%, #1dc8e9 100%);
+        color: #fff;
+        flex: 1 1 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem;
+    }
+    .split-auth-right {
+        flex: 1 1 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #fff;
+    }
+    .auth-form-box {
+        width: 100%;
+        max-width: 370px;
+        background: #fff;
+        border-radius: 2rem;
+        box-shadow: 0 8px 32px rgba(44,62,80,0.08);
+        padding: 2.5rem 2rem 2rem 2rem;
+    }
+    .input-group-text {
+        background: #f1f1f1;
+        border: none;
+        border-radius: 2rem 0 0 2rem;
+    }
+    .form-control {
+        border-radius: 0 2rem 2rem 0;
+        border-left: none;
+    }
+    .social-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 1px solid #ddd;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 6px;
+        color: #444;
+        background: #fff;
+        transition: 0.2s;
+    }
+    .social-btn:hover {
+        background: #1de9b6;
+        color: #fff;
+        border-color: #1de9b6;
+    }
+    @@media (max-width: 900px) {
+        .split-auth-container { flex-direction: column; }
+        .split-auth-left, .split-auth-right { flex: none; min-height: 320px; }
+    }
+</style>
+
+<div class="split-auth-container">
+    <div class="split-auth-left">
+        <img src="~/images/logoEdu.png" alt="Welcome" style="max-width: 260px; width: 100%;" />
+        <h2 class="fw-bold mb-3">Chào mừng trở lại!</h2>
+        <p class="mb-4">Đăng nhập để tiếp tục sử dụng hệ thống quản lý trung tâm ngoại ngữ & CNTT.</p>
+        <a asp-page="./Register" class="btn btn-outline-light px-4 mb-4">Đăng ký ngay</a>
+       
+    </div>
+    <div class="split-auth-right">
+        <div class="auth-form-box">
+            <h3 class="text-center mb-4">Đăng nhập</h3>
+            <form id="account" method="post">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2" role="alert"></div>
+                <div class="mb-3 input-group">
+                    <span class="input-group-text"><i class="fa fa-user"></i></span>
+                    <input asp-for="Input.Email" class="form-control" placeholder="Email" />
+                </div>
+                <span asp-validation-for="Input.Email" class="text-danger small"></span>
+                <div class="mb-3 input-group">
+                    <span class="input-group-text"><i class="fa fa-lock"></i></span>
+                    <input asp-for="Input.Password" class="form-control" placeholder="Mật khẩu" type="password" />
+                </div>
+                <span asp-validation-for="Input.Password" class="text-danger small"></span>
+                <div class="form-check mb-3">
+                    <input class="form-check-input" asp-for="Input.RememberMe" />
+                    <label asp-for="Input.RememberMe" class="form-check-label">Ghi nhớ đăng nhập</label>
+                </div>
+                <button type="submit" class="btn btn-success w-100 mb-2 rounded-pill">Đăng nhập</button>
+            </form>
+            <div class="text-center mb-2">
+                <a asp-page="./ForgotPassword">Quên mật khẩu?</a>
+            </div>
+            <div class="text-center mb-2">
+                <span>Hoặc đăng nhập với</span>
+            </div>
+            <div class="text-center">
+                <a href="#" class="social-btn"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="social-btn"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="social-btn"><i class="fab fa-google"></i></a>
+                <a href="#" class="social-btn"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

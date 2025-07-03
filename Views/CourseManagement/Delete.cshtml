@@ -1,0 +1,111 @@
+@model Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.Courses.Course
+
+@{ 
+    ViewData["Title"] = "Xóa Khóa học";
+    var hasClasses = Model.Classes != null && Model.Classes.Any();
+    var hasLessons = hasClasses && Model.Classes.Any(cl => cl.Lessons != null && cl.Lessons.Any());
+    var hasEnrollments = hasClasses && Model.Classes.Any(cl => cl.Enrollments != null && cl.Enrollments.Any());
+    var hasModules = Model.Modules != null && Model.Modules.Any();
+}
+
+<h1>Xóa Khóa học</h1>
+
+<h3>Bạn có chắc chắn muốn xóa khóa học này không?</h3>
+@if (hasClasses || hasLessons || hasEnrollments || hasModules)
+{
+    <div class="alert alert-danger">
+        <i class="fas fa-exclamation-triangle me-1"></i>
+        <b>Không thể xóa khóa học này vì còn dữ liệu liên quan:</b>
+        <ul>
+            @if (hasClasses) { <li><b>@Model.Classes.Count()</b> lớp học</li> }
+            @if (hasLessons) { <li>Các buổi học trong lớp</li> }
+            @if (hasEnrollments) { <li>Học viên đã đăng ký</li> }
+            @if (hasModules) { <li><b>@Model.Modules.Count()</b> module</li> }
+        </ul>
+        Vui lòng xóa hết các dữ liệu liên quan trước khi xóa khóa học này.
+    </div>
+}
+<div>
+    <h4>Khóa học</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Type)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Type)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Category)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Category)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Level)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Level)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Fee)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Fee)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.DurationHours)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.DurationHours)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.MaxStudents)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.MaxStudents)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.IsActive)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.IsActive)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.CreatedAt)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.CreatedAt)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.CreatedBy)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.CreatedBy)
+        </dd>
+    </dl>
+    @if (!(hasClasses || hasLessons || hasEnrollments || hasModules))
+    {
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="id" />
+            <input type="submit" value="Xóa" class="btn btn-danger" /> |
+            <a asp-action="Index">Quay lại danh sách</a>
+        </form>
+    }
+    else
+    {
+        <a asp-action="Index">Quay lại danh sách</a>
+    }
+</div> 

@@ -1,0 +1,38 @@
+@* @model Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.Finance.Salary
+@{
+    ViewData["Title"] = "Chi tiết lương giáo viên";
+}
+<div class="container mt-4">
+    <h2 class="fw-bold text-primary mb-4">Chi tiết lương giáo viên</h2>
+    <div class="card">
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-4">Giáo viên:</dt>
+                <dd class="col-sm-8">@Model.Teacher?.User?.FullName</dd>
+                <dt class="col-sm-4">Tháng/Năm:</dt>
+                <dd class="col-sm-8">@Model.Month/@Model.Year</dd>
+                <dt class="col-sm-4">Lương cơ bản:</dt>
+                <dd class="col-sm-8">@Model.BaseSalary.ToString("N0") đ</dd>
+                <dt class="col-sm-4">Số giờ dạy:</dt>
+                <dd class="col-sm-8">@Model.TeachingHours</dd>
+                <dt class="col-sm-4">Lương theo giờ:</dt>
+                <dd class="col-sm-8">@Model.HourlyRate.ToString("N0") đ</dd>
+                <dt class="col-sm-4">Tiền dạy:</dt>
+                <dd class="col-sm-8">@Model.TeachingPayment.ToString("N0") đ</dd>
+                <dt class="col-sm-4">Thưởng:</dt>
+                <dd class="col-sm-8">@Model.Bonus.ToString("N0") đ</dd>
+                <dt class="col-sm-4">Khấu trừ:</dt>
+                <dd class="col-sm-8">@Model.Deductions.ToString("N0") đ</dd>
+                <dt class="col-sm-4">Tổng lương:</dt>
+                <dd class="col-sm-8 fw-bold">@Model.TotalSalary.ToString("N0") đ</dd>
+                <dt class="col-sm-4">Trạng thái:</dt>
+                <dd class="col-sm-8">@Model.Status</dd>
+                <dt class="col-sm-4">Ngày trả:</dt>
+                <dd class="col-sm-8">@Model.PaidDate?.ToString("dd/MM/yyyy")</dd>
+                <dt class="col-sm-4">Ghi chú:</dt>
+                <dd class="col-sm-8">@Model.Notes</dd>
+            </dl>
+            <a asp-action="Salaries" class="btn btn-secondary mt-3">Quay lại danh sách lương</a>
+        </div>
+    </div>
+</div>  *@

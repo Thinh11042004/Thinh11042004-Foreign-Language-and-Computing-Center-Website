@@ -1,0 +1,73 @@
+@* @model IEnumerable<Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.Finance.Salary>
+@{
+    ViewData["Title"] = "Quản lý lương";
+}
+
+<div class="container-fluid">
+    <h2 class="fw-bold text-primary mb-4">Quản lý lương giáo viên</h2>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Tính lương tháng</h5>
+        </div>
+        <div class="card-body">
+            <form asp-action="CalculateMonthlySalaries" method="post" class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label for="month" class="form-label">Tháng</label>
+                    <input type="number" id="month" name="month" class="form-control" min="1" max="12" value="@DateTime.Now.Month" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="year" class="form-label">Năm</label>
+                    <input type="number" id="year" name="year" class="form-control" min="2020" max="2100" value="@DateTime.Now.Year" required>
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-primary w-100">Tính lương</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Danh sách lương đã tính</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Giáo viên</th>
+                            <th>Tháng/Năm</th>
+                            <th>Lương cơ bản</th>
+                            <th>Tổng lương</th>
+                            <th>Trạng thái</th>
+                            <th>Ngày trả</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var salary in Model)
+                        {
+                            <tr>
+                                <td>@salary.Teacher?.User?.FullName</td>
+                                <td>@salary.Month/@salary.Year</td>
+                                <td>@salary.BaseSalary.ToString("N0") đ</td>
+                                <td>@salary.TotalSalary.ToString("N0") đ</td>
+                                <td>@salary.Status</td>
+                                <td>@salary.PaidDate?.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    <a asp-action="SalaryDetails" asp-route-id="@salary.id" class="btn btn-sm btn-info">Chi tiết</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">Chưa có dữ liệu lương. Hãy thực hiện tính lương.</div>
+    }
+</div>  *@

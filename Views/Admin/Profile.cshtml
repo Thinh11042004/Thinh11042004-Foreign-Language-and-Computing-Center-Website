@@ -1,0 +1,30 @@
+@model Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.Identity.ApplicationUser
+@{
+    ViewData["Title"] = "Hồ sơ quản trị viên";
+}
+<link rel="stylesheet" href="~/css/User_Management/index.css" />
+<div class="container-fluid py-4 bg-white animate__animated animate__fadeIn text-dark">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-body d-flex align-items-center">
+                    <img src="~/images/default-avatar.png" class="rounded-circle me-4" width="120" height="120" alt="Avatar">
+                    <div>
+                        <h2 class="fw-bold text-primary mb-1">@Model.FullName</h2>
+                        <p class="mb-1"><strong>Email:</strong> @Model.Email</p>
+                        <p class="mb-1"><strong>Vai trò:</strong> @string.Join(", ", Model.UserRoles.Select(r => r.Role.Name))</p>
+                        <a asp-action="EditProfile" class="btn btn-outline-primary mt-2"><i class="fas fa-edit me-1"></i>Chỉnh sửa hồ sơ</a>
+                    </div>
+                </div>
+            </div>
+            <div class="card mt-4">
+                <div class="card-header bg-primary text-white">
+                    <i class="fas fa-info-circle me-2"></i> Thông tin bổ sung
+                </div>
+                <div class="card-body">
+                    <p><strong>Trạng thái tài khoản:</strong> @(Model.LockoutEnd == null ? "Hoạt động" : "Đã khóa")</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

@@ -1,0 +1,53 @@
+@model IEnumerable<Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.Learning.AttendanceRecord>
+@using Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.Enums
+
+@{
+    ViewData["Title"] = "Danh sách điểm danh";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Danh sách điểm danh</h4>
+        </div>
+        <div class="card-body">
+            <div class="mb-3">
+                <h5><strong>Lớp:</strong> @ViewBag.ClassName</h5>
+                <p class="mb-0"><strong>Buổi học:</strong> @ViewBag.LessonDate</p>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle">
+                    <thead class="table-light">
+                        <tr class="text-center">
+                            <th style="width: 5%;">STT</th>
+                            <th>Họ tên</th>
+                            <th>Thời gian điểm danh</th>
+                            <th>Người điểm danh</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int stt = 1;
+                        }
+                        @foreach (var item in Model)
+                        {
+                            <tr class="text-center">
+                                <td>@(stt++)</td>
+                                <td class="text-start">@item.Student.User.FullName</td>
+                                <td>@item.MarkedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm:ss")</td>
+                                <td>@item.MarkedBy</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-3">
+                <a href="@Url.Action("Attendance", "Teacher")" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Quay lại điểm danh
+                </a>
+            </div>
+        </div>
+    </div>
+</div> 

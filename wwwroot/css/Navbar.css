@@ -1,0 +1,60 @@
+﻿
+/*File Navbar.css*/
+
+:root {
+    --color-1: #F4EEFF; /* Màu tím nhạt nhất */
+    --color-2: #DCD6F7; /* Màu tím nhạt */
+    --color-3: #A6B1E1; /* Màu xanh tím */
+    --color-4: #424874; /* Màu tím đậm */
+}
+
+/* Reset CSS cơ bản */
+* {
+    margin: 0; /* Loại bỏ margin mặc định */
+    padding: 0; /* Loại bỏ padding mặc định */
+    box-sizing: border-box; /* Đảm bảo tất cả phần tử tính padding và border vào kích thước tổng thể */
+}
+
+body {
+    font-family: 'Segoe UI', Arial, sans-serif; /* Font chữ thân thiện và dễ đọc */
+    background-color: #ffffff; /* Màu nền trắng cho body */
+}
+
+.navbar {
+    background-color: var(--color-4); /* Màu nền navbar sử dụng biến --color-4 */
+    padding: 1rem 0; /* Padding cho navbar, tạo không gian ở trên và dưới */
+    width: 100%; /* Đảm bảo navbar chiếm 100% chiều rộng của trang */
+}
+
+/* Logo/Brand */
+.navbar-brand {
+    font-size: 1.3rem; /* Tăng kích thước chữ cho logo */
+    font-weight: 500; /* Độ đậm của font cho logo */
+    display: flex; /* Dùng flex để căn chỉnh các phần tử bên trong logo */
+    align-items: center; /* Căn giữa theo chiều dọc */
+}
+
+/* Menu navigation */
+.navbar-nav {
+    display: flex; /* Sử dụng Flexbox để sắp xếp các item trong navbar */
+    font-size: 1rem; /* Kích thước font cho các item trong menu */
+    transition: all 0.3s ease; /* Hiệu ứng chuyển đổi mượt mà khi hover */
+    margin-left: 100px;
+}
+    .navbar-nav i {
+        padding-right: 0.3rem;
+    }   
+
+    .navbar-nav .nav-item {
+        margin-left: 1.5rem; /* Tạo khoảng cách giữa các item trong menu */
+    }
+
+
+    .navbar-nav:hover {
+        color: var(--color-2); /* Thay đổi màu chữ khi hover */
+    }
+
+
+
+
+

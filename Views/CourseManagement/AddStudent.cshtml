@@ -1,0 +1,55 @@
+@model List<Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.Users.Students>
+@{
+    var course = ViewBag.Course as Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.Courses.Course;
+    ViewData["Title"] = "Thêm học viên vào khóa học: " + course?.Name;
+}
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-success text-white">
+            <h2 class="card-title mb-0">Thêm học viên vào khóa học: @course?.Name</h2>
+        </div>
+        <div class="card-body">
+            <form asp-action="AddMultipleStudents" method="post">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Họ tên</th>
+                            <th>Email</th>
+                            <th>Điện thoại</th>
+                            <th>Chọn</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            int stt = 1;
+                            foreach (var student in Model)
+                            {
+                                <tr>
+                                    <td>@stt</td>
+                                    <td>@student.User?.FullName</td>
+                                    <td>@student.User?.Email</td>
+                                    <td>@student.User?.PhoneNumber</td>
+                                    <td>
+                                        <input type="checkbox" name="selectedStudents" value="@student.id" />
+                                    </td>
+                                </tr>
+                                stt++;
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center">Tất cả học viên đã đăng ký khóa học này</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <input type="hidden" name="courseId" value="@course?.id" />
+                <button type="submit" class="btn btn-success btn-sm">Thêm các học viên đã chọn</button>
+            </form>
+            <a asp-action="Students" asp-route-id="@course?.id" class="btn btn-secondary mt-3">Quay lại danh sách học viên</a>
+        </div>
+    </div>
+</div>

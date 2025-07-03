@@ -1,0 +1,58 @@
+@model Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.Learning.Lesson
+@{
+    ViewData["Title"] = "Sửa buổi học";
+}
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <div>@error.ErrorMessage</div>
+        }
+    </div>
+}
+<h2 class="mb-4">Sửa buổi học</h2>
+<form asp-action="EditLesson" method="post">
+    <input type="hidden" asp-for="id" />
+    <input type="hidden" asp-for="ClassId" />
+    <div class="mb-3">
+        <label asp-for="Title" class="form-label">Tên buổi học</label>
+        <input asp-for="Title" class="form-control" required />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="ScheduledDate" class="form-label">Ngày học</label>
+        <input asp-for="ScheduledDate" type="date" class="form-control" required />
+        <span asp-validation-for="ScheduledDate" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Content" class="form-label">Nội dung</label>
+        <textarea asp-for="Content" class="form-control"></textarea>
+        <!-- Không required, không validate bắt buộc -->
+    </div>
+    <!--<div class="mb-3">
+        <label asp-for="Objectives" class="form-label">Mục tiêu</label>
+        <textarea asp-for="Objectives" class="form-control"></textarea>
+        <span asp-validation-for="Objectives" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Materials" class="form-label">Tài liệu</label>
+        <textarea asp-for="Materials" class="form-control"></textarea>
+        <span asp-validation-for="Materials" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Homework" class="form-label">Bài tập</label>
+        <textarea asp-for="Homework" class="form-control"></textarea>
+        <span asp-validation-for="Homework" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Notes" class="form-label">Ghi chú</label>
+        <textarea asp-for="Notes" class="form-control"></textarea>
+        <span asp-validation-for="Notes" class="text-danger"></span>
+    </div>-->
+    <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i> Lưu</button>
+    <a asp-action="Lessons" class="btn btn-secondary ms-2">Hủy</a>
+</form>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+} 

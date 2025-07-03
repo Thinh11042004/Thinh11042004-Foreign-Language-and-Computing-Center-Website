@@ -1,0 +1,295 @@
+@model Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.ViewModel.UserViewModel.CreateUserViewModel
+@{
+    ViewData["Title"] = "Thêm người dùng";
+}
+<link rel="stylesheet" href="~/css/User_Management/create.css" />
+
+<!-- Validation Summary -->
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <h4>Có lỗi xảy ra:</h4>
+        <ul>
+            @foreach (var modelState in ViewData.ModelState.Values)
+            {
+                foreach (var error in modelState.Errors)
+                {
+                    <li>@error.ErrorMessage</li>
+                }
+            }
+        </ul>
+    </div>
+}
+
+<div class="container my-5 animate__animated animate__fadeIn">
+    <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-header bg-gradient-primary text-white rounded-top-4">
+            <h3 class="mb-0"><i class="fas fa-user-plus me-2"></i>Thêm người dùng mới</h3>
+        </div>
+        <div class="card-body px-4 py-5 bg-light">
+            <form asp-controller="UserManagement" asp-action="CreateUser" method="post" class="needs-validation" novalidate>
+                @Html.AntiForgeryToken()
+
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label for="FullName">Họ và tên</label>
+                        <input asp-for="FullName" class="form-control form-control-lg" placeholder="Nhập họ và tên" />
+                        <span asp-validation-for="FullName" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="Email">Email</label>
+                        <input asp-for="Email" class="form-control form-control-lg" placeholder="Nhập email" />
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label for="PhoneNumber">Số điện thoại</label>
+                        <input asp-for="PhoneNumber" class="form-control form-control-lg" placeholder="Nhập số điện thoại" />
+                        <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="BirthDate">Ngày sinh</label>
+                        <input asp-for="DateOfBirth" type="date" class="form-control form-control-lg" value="@DateTime.Now.AddYears(-6).ToString("yyyy-MM-dd")" max="@DateTime.Now.AddYears(-6).ToString("yyyy-MM-dd")" />
+                        <span asp-validation-for="DateOfBirth" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-12">
+                        <label for="Address">Địa chỉ</label>
+                        <input asp-for="Address" class="form-control form-control-lg" placeholder="Nhập địa chỉ" />
+                        <span asp-validation-for="Address" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <!-- Tùy chọn mật khẩu -->
+                <div class="mb-4">
+                    <label for="PasswordType">Loại mật khẩu</label>
+                    <div class="form-check">
+                        <input asp-for="PasswordType" type="radio" value="0" class="form-check-input" id="useEmail" checked />
+                        <label class="form-check-label" for="useEmail">
+                            Sử dụng email làm mật khẩu mặc định
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input asp-for="PasswordType" type="radio" value="1" class="form-check-input" id="customPassword" />
+                        <label class="form-check-label" for="customPassword">
+                            Đặt mật khẩu tùy chỉnh
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Mật khẩu tùy chỉnh -->
+                <div class="row mb-4" id="customPasswordFields" style="display:none;">
+                    <div class="col-md-6">
+                        <label for="CustomPassword">Mật khẩu tùy chỉnh</label>
+                        <input asp-for="CustomPassword" type="password" class="form-control form-control-lg" placeholder="Ít nhất 6 ký tự" />
+                        <span asp-validation-for="CustomPassword" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="ConfirmPassword">Xác nhận mật khẩu</label>
+                        <input asp-for="ConfirmPassword" type="password" class="form-control form-control-lg" placeholder="Nhập lại mật khẩu" />
+                        <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <!-- Checkbox bắt buộc đổi mật khẩu -->
+                <div class="mb-4">
+                    <div class="form-check">
+                        <input asp-for="MustChangePassword" type="checkbox" class="form-check-input" checked />
+                        <label for="MustChangePassword">
+                            Bắt buộc người dùng đổi mật khẩu khi đăng nhập lần đầu
+                        </label>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="Role">Vai trò</label>
+                    <select asp-for="Role" class="form-select form-select-lg" id="roleSelector">
+                        <option value="" disabled selected>-- Chọn vai trò --</option>
+
+                        @foreach (var role in Model.Roles)
+                        {
+                            if (role != "SuperAdmin")
+                            {
+                                var display = role switch
+                                {
+                                    "Admin" => "Quản trị viên",
+                                    "Teacher" => "Giáo viên",
+                                    "Student" => "Học sinh",
+                                    _ => role
+                                };
+                                <option value="@role">@display</option>
+                            }
+                        }
+                    </select>
+                    <span asp-validation-for="Role" class="text-danger small"></span>
+                </div>
+
+                <!-- Mã tự động -->
+                <div class="mb-4" id="autoCodeContainer" style="display:none;">
+                    <label class="form-label" id="codeLabel">Mã hệ thống</label>
+                    <input type="text" id="autoCode" class="form-control form-control-lg bg-white text-dark" readonly />
+                </div>
+
+                <div class="d-flex justify-content-between mt-5">
+                    <a asp-action="Users" class="btn btn-secondary btn-lg">
+                        <i class="fas fa-arrow-left"></i> Quay lại
+                    </a>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save me-1"></i>Tạo người dùng
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+             document.addEventListener('DOMContentLoaded', function() {
+            console.log('CreateUser View loaded');
+
+            // Các elements cần thiết
+            const passwordTypeRadios = document.querySelectorAll('input[name="PasswordType"]');
+            const customPasswordFields = document.getElementById('customPasswordFields');
+            const customPasswordInput = document.querySelector('input[name="CustomPassword"]');
+            const confirmPasswordInput = document.querySelector('input[name="ConfirmPassword"]');
+            const emailInput = document.querySelector('input[name="Email"]');
+
+            // Hàm xử lý khi thay đổi loại mật khẩu
+            function handlePasswordTypeChange() {
+                const selectedType = document.querySelector('input[name="PasswordType"]:checked');
+
+                if (selectedType && selectedType.value === '1') {
+                    // Trường hợp: Đặt mật khẩu tùy chỉnh
+                    showCustomPasswordFields();
+                } else {
+                    // Trường hợp: Sử dụng email làm mật khẩu mặc định
+                    hideCustomPasswordFields();
+                }
+            }
+
+            // Hiển thị các trường mật khẩu tùy chỉnh
+            function showCustomPasswordFields() {
+                customPasswordFields.style.display = 'block';
+                customPasswordInput.required = true;
+                confirmPasswordInput.required = true;
+
+                // Xóa giá trị cũ để người dùng nhập mới
+                customPasswordInput.value = '';
+                confirmPasswordInput.value = '';
+
+                // Focus vào trường mật khẩu tùy chỉnh
+                setTimeout(() => customPasswordInput.focus(), 100);
+
+                console.log('Switched to custom password mode');
+            }
+
+            // Ẩn các trường mật khẩu tùy chỉnh
+            function hideCustomPasswordFields() {
+                customPasswordFields.style.display = 'none';
+                customPasswordInput.required = false;
+                confirmPasswordInput.required = false;
+
+                // Tự động điền email làm mật khẩu
+                const currentEmail = emailInput.value.trim();
+                if (currentEmail) {
+                    customPasswordInput.value = currentEmail;
+                    confirmPasswordInput.value = currentEmail;
+                }
+
+                console.log('Switched to email as password mode');
+            }
+
+            // Xử lý khi email thay đổi (chỉ khi đang dùng email làm mật khẩu)
+            function handleEmailChange() {
+                const selectedType = document.querySelector('input[name="PasswordType"]:checked');
+
+                if (selectedType && selectedType.value === '0') {
+                    // Nếu đang chọn "Sử dụng email làm mật khẩu"
+                    const currentEmail = emailInput.value.trim();
+                    customPasswordInput.value = currentEmail;
+                    confirmPasswordInput.value = currentEmail;
+
+                    console.log('Email updated, password fields synced');
+                }
+            }
+
+            // Gắn event listeners
+            passwordTypeRadios.forEach(radio => {
+                radio.addEventListener('change', handlePasswordTypeChange);
+            });
+
+            emailInput.addEventListener('input', handleEmailChange);
+            emailInput.addEventListener('blur', handleEmailChange);
+
+            // Khởi tạo trạng thái ban đầu
+            handlePasswordTypeChange();
+
+            // Xử lý validation form
+            const form = document.querySelector('form');
+            form.addEventListener('submit', function(e) {
+                console.log('Form submission started');
+
+                // Validate mật khẩu tùy chỉnh nếu được chọn
+                const selectedType = document.querySelector('input[name="PasswordType"]:checked');
+                if (selectedType && selectedType.value === '1') {
+                    const customPassword = customPasswordInput.value.trim();
+                    const confirmPassword = confirmPasswordInput.value.trim();
+
+                    if (!customPassword) {
+                        alert('Vui lòng nhập mật khẩu tùy chỉnh');
+                        customPasswordInput.focus();
+                        e.preventDefault();
+                        return false;
+                    }
+
+                    if (customPassword.length < 6) {
+                        alert('Mật khẩu phải có ít nhất 6 ký tự');
+                        customPasswordInput.focus();
+                        e.preventDefault();
+                        return false;
+                    }
+
+                    if (customPassword !== confirmPassword) {
+                        alert('Mật khẩu xác nhận không khớp');
+                        confirmPasswordInput.focus();
+                        e.preventDefault();
+                        return false;
+                    }
+                }
+
+                // Validate email làm mật khẩu
+                if (selectedType && selectedType.value === '0') {
+                    const email = emailInput.value.trim();
+                    if (!email) {
+                        alert('Vui lòng nhập email trước khi sử dụng làm mật khẩu');
+                        emailInput.focus();
+                        e.preventDefault();
+                        return false;
+                    }
+
+                    // Đảm bảo mật khẩu được sync với email
+                    customPasswordInput.value = email;
+                    confirmPasswordInput.value = email;
+                }
+
+                // Log form data để debug
+                const formData = new FormData(this);
+                console.log('Form data before submission:');
+                for (let [key, value] of formData.entries()) {
+                    console.log(`${key}: ${value}`);
+                }
+
+         
+            });
+
+        });
+    </script>
+}

@@ -1,0 +1,173 @@
+@model IEnumerable<Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.Courses.Classroom>
+@{
+    ViewData["Title"] = "Điểm danh";
+}
+
+<div class="container-fluid py-4 bg-white animate__animated animate__fadeIn text-dark">
+    <h2 class="fw-bold text-primary"><i class="fas fa-user-check me-2"></i>Điểm danh</h2>
+    <p class="text-muted">Quản lý điểm danh học viên theo từng buổi học</p>
+
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h5 class="mb-0">Chọn lớp và buổi học</h5>
+        </div>
+        <div class="card-body">
+            @if (Model != null && Model.Any())
+            {
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="classSelect" class="form-label">Chọn lớp:</label>
+                        <select id="classSelect" class="form-select">
+                            <option value="">-- Vui lòng chọn một lớp --</option>
+                            @foreach (var c in Model)
+                            {
+                                <option value="@c.id">@c.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="lessonSelect" class="form-label">Chọn buổi học:</label>
+                        <select id="lessonSelect" class="form-select" disabled>
+                            <option value="">-- Chọn lớp trước --</option>
+                        </select>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-warning">Bạn chưa được gán vào lớp học nào.</div>
+            }
+        </div>
+    </div>
+
+    <div id="attendanceSheet" class="mt-4" style="display:none;">
+        <div class="card shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Danh sách học viên</h5>
+                <span id="studentCount" class="badge bg-primary">0 học viên</span>
+            </div>
+            <div class="card-body">
+                <form id="attendanceForm">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" id="formClassId" name="classId" />
+                    <input type="hidden" id="formLessonId" name="lessonId" />
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width: 10%;">STT</th>
+                                    <th style="width: 35%;">Họ Tên</th>
+                                    <th style="width: 35%;">Trạng thái</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentList">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="d-flex justify-content-end mt-3">
+                         <button type="submit" class="btn btn-primary">Lưu điểm danh</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+$(document).ready(function () {
+    $('#classSelect').change(function () {
+        var classId = $(this).val();
+        var $lessonSelect = $('#lessonSelect');
+        $('#attendanceSheet').hide();
+        $lessonSelect.prop('disabled', true).html('<option value="">-- Đang tải... --</option>');
+
+        if (classId) {
+            $.getJSON('/Teacher/GetLessonsForClass', { classId: classId }, function (lessons) {
+                $lessonSelect.prop('disabled', false).html('<option value="">-- Chọn buổi học --</option>');
+                if(lessons.length > 0){
+                    $.each(lessons, function (i, lesson) {
+                        var d = new Date(lesson.scheduledDate);
+                        var formattedDate = d.getDate().toString().padStart(2, '0') + '/' + 
+                                            (d.getMonth() + 1).toString().padStart(2, '0') + '/' + 
+                                            d.getFullYear();
+                        $lessonSelect.append($('<option>', {
+                            value: lesson.id,
+                            text: lesson.title + ' (' + formattedDate + ')'
+                        }));
+                    });
+                } else {
+                     $lessonSelect.html('<option value="">-- Không có buổi học --</option>');
+                }
+            });
+        } else {
+             $lessonSelect.prop('disabled', true).html('<option value="">-- Chọn lớp trước --</option>');
+        }
+    });
+
+    $('#lessonSelect').change(function () {
+        var lessonId = $(this).val();
+        var classId = $('#classSelect').val();
+        var $studentList = $('#studentList');
+        
+        if (lessonId) {
+            $('#formClassId').val(classId);
+            $('#formLessonId').val(lessonId);
+
+            $.getJSON('/Teacher/GetStudentsForLesson', { lessonId: lessonId }, function (students) {
+                $studentList.empty();
+                 $('#studentCount').text(students.length + ' học viên');
+
+                if (students.length > 0) {
+                     $('#attendanceSheet').show();
+                    $.each(students, function (i, student) {
+                        var selectHtml = '<select name="records[' + i + '].Status" class="form-select">' +
+                                        '<option value="0">Có mặt</option>' +
+                                        '<option value="1">Vắng có phép</option>' +
+                                        '<option value="2">Vắng không phép</option>' +
+                                        '<option value="3">Đi trễ</option>' +
+                                     '</select>';
+
+                        var row = $('<tr>' +
+                            '<td>' + (i + 1) + '</td>' +
+                            '<td>' + student.fullName + '<input type="hidden" name="records[' + i + '].StudentId" value="' + student.id + '" /></td>' +
+                            '<td>' + selectHtml + '</td>' +
+                            '</tr>');
+
+                        row.find('select').val(student.status);
+                        $studentList.append(row);
+                    });
+                } else {
+                    $('#attendanceSheet').hide();
+                    alert('Không có học sinh nào trong lớp này.');
+                }
+            });
+        } else {
+            $('#attendanceSheet').hide();
+        }
+    });
+
+    $('#attendanceForm').submit(function (e) {
+        e.preventDefault();
+        var formData = $(this).serialize();
+        var classId = $('#formClassId').val();
+        var lessonId = $('#formLessonId').val();
+        $.ajax({
+            url: '/Teacher/MarkAttendance',
+            type: 'POST',
+            data: formData,
+            success: function (response) {
+                if(response.success){
+                    window.location.href = '/Teacher/AttendanceList?classId=' + classId + '&lessonId=' + lessonId;
+                } else {
+                    alert('Lỗi: ' + response.message);
+                }
+            },
+            error: function () {
+                alert('Đã có lỗi xảy ra khi lưu điểm danh.');
+            }
+        });
+    });
+});
+</script>
+} 

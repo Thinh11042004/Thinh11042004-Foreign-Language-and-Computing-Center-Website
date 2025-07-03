@@ -1,0 +1,61 @@
+@model Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.ViewModel.LessonViewModel.CreateLessonViewModel
+
+@{
+    ViewData["Title"] = "Tạo buổi học cho lớp (Quản trị viên)";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="CreateLesson" method="post">
+    <div class="mb-3">
+        <label asp-for="ClassId" class="form-label">Chọn lớp</label>
+        <select asp-for="ClassId" class="form-select" required>
+            <option value="">-- Chọn lớp --</option>
+            @* Nên truyền ViewBag.Classes là List<Classroom> từ controller *@
+            @if (ViewBag.Classes != null)
+            {
+                foreach (var cls in ViewBag.Classes)
+                {
+                    <option value="@cls.id">@cls.Name</option>
+                }
+            }
+        </select>
+        <span asp-validation-for="ClassId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Title" class="form-label">Tiêu đề buổi học</label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Date" class="form-label">Ngày học</label>
+        <input asp-for="Date" class="form-control" type="date" required />
+        <span asp-validation-for="Date" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-success">Tạo buổi học</button>
+</form>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Tự động tính giờ kết thúc khi chọn giờ bắt đầu
+        document.addEventListener('DOMContentLoaded', function () {
+            const startInput = document.getElementById('StartTime');
+            const endInput = document.getElementById('EndTime');
+            if (startInput && endInput) {
+                startInput.addEventListener('change', function () {
+                    const val = this.value;
+                    if (val) {
+                        const [h, m] = val.split(':').map(Number);
+                        let endH = h + 1;
+                        let endM = m + 30;
+                        if (endM >= 60) { endH += 1; endM -= 60; }
+                        if (endH > 23) endH -= 24;
+                        endInput.value = `${endH.toString().padStart(2, '0')}:${endM.toString().padStart(2, '0')}`;
+                    } else {
+                        endInput.value = '';
+                    }
+                });
+            }
+        });
+    </script>
+} 

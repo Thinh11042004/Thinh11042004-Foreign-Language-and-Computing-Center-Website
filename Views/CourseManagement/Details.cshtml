@@ -1,0 +1,121 @@
+@model Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.ViewModel.Course.CourseDetailsViewModel
+
+@{ 
+    ViewData["Title"] = "Chi tiết khóa học";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h2 class="card-title mb-0">Chi tiết khóa học: @Model.Course?.Name</h2>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-4">Tên khóa học:</dt>
+                <dd class="col-sm-8">@Model.Course?.Name</dd>
+                <dt class="col-sm-4">Mô tả:</dt>
+                <dd class="col-sm-8">@Model.Course?.Description</dd>
+                <dt class="col-sm-4">Loại:</dt>
+                <dd class="col-sm-8">
+                    @switch (Model.Course?.Type.ToString())
+                    {
+                        case "Language":
+                            @:Ngôn ngữ
+                            break;
+                        case "IT":
+                            @:Công nghệ thông tin
+                            break;
+                        default:
+                            @Model.Course?.Type
+                            break;
+                    }
+                </dd>
+                <dt class="col-sm-4">Danh mục:</dt>
+                <dd class="col-sm-8">
+                    @switch (Model.Course?.Category?.ToString())
+                    {
+                        case "Ngoại ngữ":
+                            @:Ngoại ngữ
+                            break;
+                        case "Tin học":
+                            @:Tin học
+                            break;
+                        default:
+                            @Model.Course?.Category
+                            break;
+                    }
+                </dd>
+                <dt class="col-sm-4">Cấp độ:</dt>
+                <dd class="col-sm-8">
+                    @switch (Model.Course?.Level.ToString())
+                    {
+                        case "Beginner":
+                            @:Sơ cấp
+                            break;
+                        case "Intermediate":
+                            @:Trung cấp
+                            break;
+                        case "UpperIntermediate":
+                            @:Nâng cao
+                            break;
+                        case "Advanced":
+                            @:Chuyên sâu
+                            break;
+                        default:
+                            @Model.Course?.Level
+                            break;
+                    }
+                </dd>
+                <dt class="col-sm-4">Học phí:</dt>
+                <dd class="col-sm-8">@Model.Course?.Fee.ToString("N0") VNĐ</dd>
+                <dt class="col-sm-4">Thời lượng (giờ):</dt>
+                <dd class="col-sm-8">@Model.Course?.DurationHours</dd>
+                <dt class="col-sm-4">Số học viên tối đa:</dt>
+                <dd class="col-sm-8">@Model.Course?.MaxStudents</dd>
+                <dt class="col-sm-4">Tổng số lượt đăng ký:</dt>
+                <dd class="col-sm-8">@Model.TotalEnrollments</dd>
+                <dt class="col-sm-4">Số lớp đang hoạt động:</dt>
+                <dd class="col-sm-8">@Model.ActiveClasses</dd>
+                <dt class="col-sm-4">Đánh giá trung bình:</dt>
+                <dd class="col-sm-8">@Model.AverageRating.ToString("N1")</dd>
+            </dl>
+        </div>
+        <div class="card-footer text-end">
+            <button type="button" class="btn btn-warning">Sửa</button>
+            <button type="button" class="btn btn-secondary">Quay lại danh sách</button>
+        </div>
+    </div>
+
+    @if (Model.Course.Modules != null && Model.Course.Modules.Any())
+    {
+        <h3 class="mt-4">Các học phần của khóa học:</h3>
+        <div class="list-group">
+            @foreach (var module in Model.Course.Modules)
+            {
+                <div class="list-group-item list-group-item-action flex-column align-items-start">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">@module.Title</h5>
+                    </div>
+                    <p class="mb-1">@module.Description</p>
+                </div>
+            }
+        </div>
+    }
+
+    @if (Model.Course.Classes != null && Model.Course.Classes.Any())
+    {
+        <h3 class="mt-4">Các lớp học của khóa học:</h3>
+        <div class="list-group">
+            @foreach (var classroom in Model.Course.Classes)
+            {
+                <div class="list-group-item list-group-item-action flex-column align-items-start">
+                    <div class="d-flex w-100 justify-content-between">
+                        
+                        <small>Trạng thái: @classroom.Status</small>
+                    </div>
+                    <p class="mb-1">Phòng: @classroom.Room?.Name - Lịch trình: @classroom.Schedule</p>
+                </div>
+            }
+        </div>
+    }
+</div> 

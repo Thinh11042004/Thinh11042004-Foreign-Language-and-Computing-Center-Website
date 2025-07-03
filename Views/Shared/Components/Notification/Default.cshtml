@@ -1,0 +1,41 @@
+@model IEnumerable<Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.Communication.Notification>
+
+<li class="nav-item dropdown">
+    <a class="nav-link position-relative" href="#" role="button" data-bs-toggle="dropdown" id="notificationDropdown">
+        <i class="fas fa-bell"></i>
+        @if (Model.Any())
+        {
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notification-count">
+                @Model.Count()
+            </span>
+        }
+    </a>
+    <div class="dropdown-menu dropdown-menu-end p-0" style="width: 350px; max-height: 400px; overflow-y: auto;">
+        <div class="dropdown-header bg-primary text-white p-3">
+            <h6 class="mb-0">Thông báo</h6>
+        </div>
+        <div id="notification-list" class="p-2">
+            @if (Model != null && Model.Any())
+            {
+                foreach (var notification in Model)
+                {
+                    <div class="notification-item">
+                        <p><strong>@notification.Title</strong></p>
+                        <p>@notification.Message</p>
+                        <p><small>@notification.CreatedAt.ToString("dd/MM/yyyy HH:mm")</small></p>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="text-center text-muted p-3">
+                    <i class="fas fa-bell-slash fa-2x mb-2"></i>
+                    <p class="mb-0">Không có thông báo mới</p>
+                </div>
+            }
+        </div>
+        <div class="dropdown-footer border-top p-2">
+            <a href="/Notifications" class="btn btn-sm btn-outline-primary w-100">Xem tất cả</a>
+        </div>
+    </div>
+</li>

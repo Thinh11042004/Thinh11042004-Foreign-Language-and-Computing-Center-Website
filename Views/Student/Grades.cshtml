@@ -1,0 +1,191 @@
+@using Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.ViewModel.StudentViewModel
+@model GradebookViewModel
+@{
+    ViewData["Title"] = "Sổ điểm";
+}
+
+<style>
+    .card-header {
+        background-color: #f8f9fa;
+        font-weight: bold;
+    }
+    .gpa-chart-container {
+        height: 400px;
+    }
+    .progress-chart-container {
+        height: 200px;
+        margin: auto;
+    }
+</style>
+
+<div class="container-fluid py-4">
+    <h2 class="fw-bold text-primary mb-4"><i class="fas fa-book-reader me-2"></i>Sổ điểm - @Model.StudentName</h2>
+
+    <div class="row">
+        <div class="col-lg-7 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header">
+                    KẾT QUẢ HỌC TẬP
+                </div>
+                <div class="card-body">
+                    <div class="gpa-chart-container">
+                        <canvas id="gpaChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header">
+                    TIẾN ĐỘ HỌC TẬP
+                </div>
+                <div class="card-body">
+                     <div class="row align-items-center">
+                         <div class="col-md-6">
+                            <div class="progress-chart-container">
+                                <canvas id="progressDonutChart"></canvas>
+                            </div>
+                         </div>
+                         <div class="col-md-6">
+                             <ul class="list-unstyled">
+                                 <li class="mb-2"><i class="fas fa-circle text-primary me-2"></i> Buổi đã học: <strong>@Model.LearningProgress.SoBuoiDaHoc</strong></li>
+                                 <li class="mb-2"><i class="fas fa-circle text-info me-2"></i> Buổi chưa học: <strong>@Model.LearningProgress.SoBuoiChuaHoc</strong></li>
+                                 <hr/>
+                                 <li><i class="fas fa-flag-checkered me-2"></i> Tổng số buổi: <strong>@Model.LearningProgress.TongSoBuoi</strong></li>
+                             </ul>
+                         </div>
+                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm bg-white text-dark mt-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="fas fa-list"></i> Bảng điểm chi tiết</h5>
+            <span class="badge bg-primary">@Model.GradedAssignments.Count() bài</span>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>TÊN BÀI TẬP</th>
+                        <th>MÔN/LỚP</th>
+                        <th>HẠN NỘP</th>
+                        <th>ĐIỂM</th>
+                        <th>NHẬN XÉT</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.GradedAssignments)
+                    {
+                        <tr>
+                            <td>@item.Assignment?.Title</td>
+                            <td>@item.Assignment?.Lesson?.Class?.Name</td>
+                            <td>@item.Assignment?.DueDate.ToString("dd/MM/yyyy")</td>
+                            <td>@(item.Score.HasValue ? item.Score.Value.ToString("0.##") : "-")</td>
+                            <td>@item.Feedback</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div> 
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // GPA Chart
+            const gpaHistory = @Html.Raw(Json.Serialize(Model.GpaHistory));
+            const gpaLabels = gpaHistory.map(h => h.semesterName);
+            const semesterGpaData = gpaHistory.map(h => h.semesterGpa.toFixed(2));
+            const cumulativeGpaData = gpaHistory.map(h => h.cumulativeGpa.toFixed(2));
+
+            const gpaCtx = document.getElementById('gpaChart').getContext('2d');
+            new Chart(gpaCtx, {
+                type: 'bar',
+                data: {
+                    labels: gpaLabels,
+                    datasets: [
+                        {
+                            label: 'Điểm trung bình học kỳ',
+                            data: semesterGpaData,
+                            backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            borderWidth: 1,
+                            yAxisID: 'y',
+                        },
+                        {
+                            label: 'Điểm trung bình tích lũy',
+                            data: cumulativeGpaData,
+                            type: 'line',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                            yAxisID: 'y1',
+                            tension: 0.1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 4,
+                            position: 'left',
+                            title: { display: true, text: 'Điểm trung bình hệ 4' }
+                        },
+                        y1: {
+                            beginAtZero: true,
+                            max: 4,
+                            position: 'right',
+                            grid: { drawOnChartArea: false },
+                            title: { display: true, text: 'Điểm tích lũy' }
+                        }
+                    }
+                }
+            });
+
+            // Progress Donut Chart
+            const progressData = @Html.Raw(Json.Serialize(Model.LearningProgress));
+            const progressCtx = document.getElementById('progressDonutChart').getContext('2d');
+            new Chart(progressCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Buổi đã học', 'Buổi chưa học'],
+                    datasets: [{
+                        data: [progressData.soBuoiDaHoc, progressData.soBuoiChuaHoc],
+                        backgroundColor: [
+                            'rgba(54, 162, 235, 0.7)',
+                            'rgba(255, 99, 132, 0.7)'
+                        ],
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    label += context.raw + ' buổi';
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+} 

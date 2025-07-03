@@ -1,0 +1,62 @@
+@using Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.ViewModel.Shared
+@model IEnumerable<Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.Learning.Assignment>
+@{
+    ViewData["Title"] = "Danh sách bài tập";
+    var classes = ViewBag.Classes as List<Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.ViewModel.Shared.ClassroomItem>;
+    int? selectedClassId = ViewBag.SelectedClassId as int?;
+}
+<h2 class="mb-4">Danh sách bài tập đã tạo</h2>
+<form method="get" class="mb-3">
+    <div class="row g-2 align-items-center">
+        <div class="col-auto">
+            <select name="classId" class="form-select" onchange="this.form.submit()">
+                <option value="">-- Tất cả lớp --</option>
+                @if (classes != null)
+                {
+                    foreach (var c in classes)
+                    {
+                        <option value="@c.Id" selected="@(selectedClassId == c.Id ? "selected" : null)">@c.Name</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-auto">
+            <a href="@Url.Action("CreateAssignment", "Teacher")" class="btn btn-primary">Tạo bài tập mới</a>
+        </div>
+    </div>
+</form>
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Chưa có bài tập nào cho lớp này.</div>
+}
+else
+{
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Tiêu đề</th>
+                <th>Lớp</th>
+                <th>Buổi học</th>
+                <th>Hạn nộp</th>
+                <th>Điểm tối đa</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var a in Model)
+        {
+            <tr>
+                <td>@a.Title</td>
+                <td>@a.Lesson?.Class?.Name</td>
+                <td>@a.Lesson?.Title</td>
+                <td>@a.DueDate.ToString("dd/MM/yyyy")</td>
+                <td>@a.MaxScore</td>
+                <td>
+                    <a href="@Url.Action("EditAssignment", "Teacher", new { id = a.id })" class="btn btn-sm btn-warning me-1">Sửa</a>
+                    <a href="@Url.Action("DeleteAssignment", "Teacher", new { id = a.id })" class="btn btn-sm btn-danger" onclick="return confirm('Bạn có chắc muốn xóa bài tập này?');">Xóa</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+} 

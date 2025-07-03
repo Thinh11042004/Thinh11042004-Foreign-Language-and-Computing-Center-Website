@@ -1,0 +1,124 @@
+@* @model Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.ViewModel.Financial.FinancialDashboardViewModel
+
+@{
+    ViewData["Title"] = "Quản lý tài chính";
+}
+
+<h1>Quản lý tài chính</h1>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <h5 class="card-title">Tổng doanh thu</h5>
+                <p class="card-text h3">@Model.TotalRevenue.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <h5 class="card-title">Thanh toán đang chờ</h5>
+                <p class="card-text h3">@Model.PendingPayments.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <h5 class="card-title">Doanh thu tháng này</h5>
+                <p class="card-text h3">@Model.MonthlyRevenue.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Các khoản thanh toán gần đây</h4>
+            </div>
+            <div class="card-body">
+                @if (Model.RecentPayments != null && Model.RecentPayments.Any())
+                {
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Sinh viên</th>
+                                <th>Số tiền</th>
+                                <th>Trạng thái</th>
+                                <th>Ngày thanh toán</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var payment in Model.RecentPayments)
+                            {
+                                <tr>
+                                    <td>@payment.Student.User.FullName</td>
+                                    <td>@payment.Amount.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))</td>
+                                    <td>@payment.Status</td>
+                                    <td>@(payment.PaidDate?.ToString("dd/MM/yyyy") ?? "N/A")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p>Không có khoản thanh toán gần đây nào.</p>
+                }
+                <a asp-action="Payments" class="btn btn-secondary mt-3">Xem tất cả các khoản thanh toán</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Các khoản thanh toán quá hạn</h4>
+            </div>
+            <div class="card-body">
+                @if (Model.OverduePayments != null && Model.OverduePayments.Any())
+                {
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Sinh viên</th>
+                                <th>Số tiền</th>
+                                <th>Ngày đến hạn</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var payment in Model.OverduePayments)
+                            {
+                                <tr>
+                                    <td>@payment.Student.User.FullName</td>
+                                    <td>@payment.Amount.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))</td>
+                                    <td>@payment.DueDate.ToString("dd/MM/yyyy")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p>Không có khoản thanh toán quá hạn nào.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Quản lý lương</h4>
+            </div>
+            <div class="card-body">
+                <p>Xem và quản lý bảng lương giáo viên.</p>
+                <a asp-action="Salaries" class="btn btn-primary">Đi đến quản lý lương</a>
+            </div>
+        </div>
+    </div>
+</div> *@

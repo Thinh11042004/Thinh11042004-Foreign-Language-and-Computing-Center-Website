@@ -1,0 +1,141 @@
+@model Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.ViewModel.Report.EnrollmentReportViewModel
+
+@{
+    ViewData["Title"] = "Báo cáo đăng ký";
+}
+
+<h1>Báo cáo đăng ký</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Enrollment" method="get" class="form-inline mb-4">
+            <div class="form-group mr-2">
+                <label for="startDate" class="sr-only">Ngày bắt đầu:</label>
+                <input type="date" id="startDate" name="startDate" class="form-control" value="@Model.StartDate.ToString("yyyy-MM-dd")" />
+            </div>
+            <div class="form-group mr-2">
+                <label for="endDate" class="sr-only">Ngày kết thúc:</label>
+                <input type="date" id="endDate" name="endDate" class="form-control" value="@Model.EndDate.ToString("yyyy-MM-dd")" />
+            </div>
+            <button type="submit" class="btn btn-primary">Xem báo cáo</button>
+        </form>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <h5 class="card-title">Tổng số lượt đăng ký</h5>
+                <p class="card-text h3">@Model.TotalEnrollments</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Đăng ký theo khóa học</h4>
+            </div>
+            <div class="card-body">
+                @if (Model.EnrollmentsByCourse != null && Model.EnrollmentsByCourse.Any())
+                {
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Khóa học</th>
+                                <th>Số lượng</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var entry in Model.EnrollmentsByCourse)
+                            {
+                                <tr>
+                                    <td>@entry.Key</td>
+                                    <td>@entry.Value</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p>Không có dữ liệu.</p>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Đăng ký theo trạng thái</h4>
+            </div>
+            <div class="card-body">
+                @if (Model.EnrollmentsByStatus != null && Model.EnrollmentsByStatus.Any())
+                {
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Trạng thái</th>
+                                <th>Số lượng</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var entry in Model.EnrollmentsByStatus)
+                            {
+                                <tr>
+                                    <td>@entry.Key</td>
+                                    <td>@entry.Value</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p>Không có dữ liệu.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Đăng ký hàng tháng</h4>
+            </div>
+            <div class="card-body">
+                @if (Model.MonthlyEnrollments != null && Model.MonthlyEnrollments.Any())
+                {
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Năm</th>
+                                <th>Tháng</th>
+                                <th>Số lượt đăng ký</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var monthly in Model.MonthlyEnrollments)
+                            {
+                                <tr>
+                                    <td>@monthly.Year</td>
+                                    <td>@monthly.Month</td>
+                                    <td>@monthly.Count</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p>Không có dữ liệu.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div> 

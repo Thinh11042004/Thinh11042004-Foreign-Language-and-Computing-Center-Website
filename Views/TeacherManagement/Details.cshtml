@@ -1,0 +1,48 @@
+@model Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.ViewModel.Teacher.TeacherDetailsViewModel
+
+@{
+    ViewData["Title"] = "Chi tiết giáo viên";
+}
+
+<div class="container mt-4">
+    <h2>Chi tiết giáo viên: @Model.Teacher.User?.FullName</h2>
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <p><strong>Email:</strong> @Model.Teacher.User?.Email</p>
+            <p><strong>Chuyên môn:</strong> @Model.Teacher.Specialization</p>
+            <p><strong>Lĩnh vực:</strong> @Model.Teacher.SubjectAreas</p>
+            <p><strong>Điểm trung bình:</strong> @Model.AverageRating</p>
+            <p><strong>Tổng số học viên:</strong> @Model.TotalStudents</p>
+            <p><strong>Giờ dạy trong tháng:</strong> @Model.MonthlyTeachingHours</p>
+        </div>
+    </div>
+    <h4>Các lớp đang dạy</h4>
+    @if (Model.CurrentClasses != null && Model.CurrentClasses.Any())
+    {
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Tên lớp</th>
+                    <th>Khóa học</th>
+                    <th>Ngày bắt đầu</th>
+                    <th>Ngày kết thúc</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var c in Model.CurrentClasses)
+                {
+                    <tr>
+                        <td>@c.Name</td>
+                        <td>@c.Course?.Name</td>
+                        <td>@c.StartDate.ToString("dd/MM/yyyy")</td>
+                        <td>@c.EndDate.ToString("dd/MM/yyyy")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="alert alert-info">Chưa có lớp nào đang dạy.</div>
+    }
+</div> 

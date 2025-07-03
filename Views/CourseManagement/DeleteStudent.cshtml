@@ -1,0 +1,33 @@
+@model Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.Learning.Enrollment
+@{
+    ViewData["Title"] = "Xóa học viên khỏi khóa học";
+}
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-danger text-white">
+            <h2 class="card-title mb-0">Xóa học viên khỏi khóa học</h2>
+        </div>
+        <div class="card-body">
+            @if (ViewBag.DeleteError != null)
+            {
+                <div class="alert alert-warning">@ViewBag.DeleteError</div>
+            }
+            <form asp-action="DeleteStudent" method="post">
+                <input type="hidden" name="courseId" value="@Model.CourseId" />
+                <input type="hidden" name="studentId" value="@Model.StudentId" />
+                @if (ViewBag.ForceDelete == true)
+                {
+                    <input type="hidden" name="forceDelete" value="true" />
+                    <p>Bạn có chắc chắn muốn xóa học viên <b>@Model.Student?.User?.FullName</b> và tất cả bài nộp liên quan khỏi khóa học không?</p>
+                    <button type="submit" class="btn btn-danger">Xóa tất cả</button>
+                }
+                else
+                {
+                    <p>Bạn có chắc chắn muốn xóa học viên <b>@Model.Student?.User?.FullName</b> khỏi khóa học không?</p>
+                    <button type="submit" class="btn btn-danger">Xóa</button>
+                }
+                <a asp-action="Students" asp-route-id="@Model.CourseId" class="btn btn-secondary ms-2">Hủy</a>
+            </form>
+        </div>
+    </div>
+</div> 

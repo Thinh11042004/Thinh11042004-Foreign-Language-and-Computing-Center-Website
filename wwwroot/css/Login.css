@@ -1,0 +1,146 @@
+﻿:root {
+    --color-1: #F4EEFF;
+    --color-2: #DCD6F7;
+    --color-3: #A6B1E1;
+    --color-4: #424874;
+}
+
+body {
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, var(--color-3), var(--color-4));
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.navbar {
+    background: linear-gradient(135deg, var(--color-3), var(--color-4)); /* Màu nền navbar sử dụng biến --color-4 */
+}
+
+.login-wrapper {
+    background-color: white;
+    margin-top: 5rem;
+    border-radius: 45px;
+    box-shadow: 10px 10px 40px #A6B1E1;
+    max-width: 500px;
+    width: 100%;
+    overflow: hidden;
+}
+
+/* Right - Form section */
+.login-right {
+    padding: 60px 40px;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+    .login-right h2 {
+        text-align: center;
+        font-weight: 700;
+        font-size: 2rem;
+        background: linear-gradient(135deg, var(--color-3), var(--color-4));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .login-right p {
+        text-align: center;
+        color: #6c757d;
+        font-size: 0.95rem;
+        margin-bottom: 30px;
+    }
+
+/* ASP.NET Core Identity form override */
+form input[type="email"],
+form input[type="password"],
+form input[type="text"] {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid var(--color-2);
+    border-radius: 12px;
+    background: #fff;
+    font-size: 1rem;
+    margin-bottom: 20px;
+    transition: all 0.3s;
+}
+
+input[type="checkbox"].form-check-input {
+    appearance: checkbox;
+    -webkit-appearance: checkbox;
+    -moz-appearance: checkbox;
+    opacity: 1;
+    position: static;
+    margin-top: 0.3rem;
+    margin-right: 0.5rem;
+    width: auto;
+    height: auto;
+}
+
+
+form input:focus {
+    border-color: var(--color-3);
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(166, 177, 225, 0.2);
+}
+
+form label {
+    font-weight: 500;
+    color: var(--color-4);
+}
+
+form .form-check {
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+}
+
+form button[type="submit"] {
+    background: linear-gradient(135deg, var(--color-3), var(--color-4));
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 12px;
+    font-weight: 600;
+    width: 100%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+form button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(166, 177, 225, 0.3);
+}
+
+.login-right .form-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    font-size: 0.9rem;
+}
+
+    .login-right .form-footer a {
+        color: var(--color-3);
+        text-decoration: none;
+    }
+
+        .login-right .form-footer a:hover {
+            text-decoration: underline;
+        }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .login-wrapper {
+        grid-template-columns: 1fr;
+    }
+
+    .login-left {
+        display: none;
+    }
+
+    .login-right {
+        padding: 40px 30px;
+    }
+}

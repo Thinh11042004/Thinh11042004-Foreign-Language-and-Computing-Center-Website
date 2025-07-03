@@ -1,0 +1,74 @@
+@using Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.ViewModel.ClassroomViewModel
+@model IEnumerable<Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.Courses.Classroom>
+
+@{ 
+    ViewData["Title"] = "Quản lý Lớp học";
+}
+
+<h1>Danh sách Lớp học</h1>
+
+<p>
+    <a  asp-action="Create" class="btn btn-success"><i class="fas fa-plus me-1"></i>Tạo Lớp học mới</a>
+</p>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Danh sách Lớp học</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Tên lớp</th>
+                        <th>Khóa học</th>
+                        <th>Phòng học</th>
+                        <th>Ngày bắt đầu</th>
+                        <th>Ngày kết thúc</th>
+                        <th>Trạng thái</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.Name</td>
+                                <td>@item.Course?.Name</td>
+                                <td>@item.Room?.Name</td>
+                                <td>@item.StartDate.ToString("yyyy-MM-dd")</td>
+                                <td>@item.EndDate.ToString("yyyy-MM-dd")</td>
+                                <td>
+                                    @if (item.Status == Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.Enums.ClassStatus.Planned)
+                                    {
+                                        <span class="badge bg-warning">Chưa khai giảng</span>
+                                    }
+                                    else if (item.Status == Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.Enums.ClassStatus.Active)
+                                    {
+                                        <span class="badge bg-success">Đang mở</span>
+                                    }
+                                    else if (item.Status == Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.Enums.ClassStatus.Completed)
+                                    {
+                                        <span class="badge bg-primary">Đã kết thúc</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Không xác định</span>
+                                    }
+                                </td>
+                                <td>
+                                    <a asp-action="Details" asp-route-id="@item.id" class="btn btn-sm btn-outline-info">Chi tiết</a>
+                                    <a asp-action="Edit" asp-route-id="@item.id" class="btn btn-sm btn-outline-warning">Sửa</a>
+                                    <a asp-action="Delete" asp-route-id="@item.id" class="btn btn-sm btn-outline-danger">Xóa</a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                   
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div> 

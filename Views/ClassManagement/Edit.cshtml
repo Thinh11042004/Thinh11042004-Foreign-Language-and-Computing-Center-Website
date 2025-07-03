@@ -1,0 +1,129 @@
+@using Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.ViewModel.ClassroomViewModel
+@model Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.ViewModel.ClassroomViewModel.CreateClassViewModel
+
+@{
+    ViewData["Title"] = "Chỉnh sửa lớp học";
+    var days = new List<string> { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
+    var dayLabels = new Dictionary<string, string>
+    {
+        { "Mon", "Thứ 2" },
+        { "Tue", "Thứ 3" },
+        { "Wed", "Thứ 4" },
+        { "Thu", "Thứ 5" },
+        { "Fri", "Thứ 6" },
+        { "Sat", "Thứ 7" },
+        { "Sun", "Chủ nhật" }
+    };
+    var slots = new List<string> { "Ca1", "Ca2", "Ca3", "Ca4", "Ca5", "Ca6" };
+    var slotLabels = new Dictionary<string, string>
+    {
+        { "Ca1", "Ca 1 (08h00–09h30)" },
+        { "Ca2", "Ca 2 (10h00–11h30)" },
+        { "Ca3", "Ca 3 (13h00–14h30)" },
+        { "Ca4", "Ca 4 (15h00–16h30)" },
+        { "Ca5", "Ca 5 (18h00–19h30)" },
+        { "Ca6", "Ca 6 (20h00–21h30)" }
+    };
+}
+
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-danger">@ViewBag.Error</div>
+}
+
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-warning text-white">
+            <h2 class="card-title mb-0">Chỉnh sửa lớp học: @Model.Name</h2>
+        </div>
+        <div class="card-body">
+            <form asp-action="Edit" method="post">
+                <input type="hidden" asp-for="id" />
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label asp-for="Name" class="control-label">Tên lớp học:</label>
+                            <input asp-for="Name" class="form-control" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="CourseId" class="control-label">Khóa học:</label>
+                            <select asp-for="CourseId" class="form-control"
+                                    asp-items="@(new SelectList(Model.Courses, "id", "Name"))">
+                                <option value="">-- Chọn khóa học --</option>
+                            </select>
+                            <span asp-validation-for="CourseId" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="RoomId" class="control-label">Phòng học:</label>
+                            <select asp-for="RoomId" class="form-control"
+                                    asp-items="@(new SelectList(Model.Rooms, "id", "Name"))">
+                                <option value="">-- Chọn phòng học --</option>
+                            </select>
+                            <span asp-validation-for="RoomId" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="StartDate" class="control-label">Ngày bắt đầu:</label>
+                            <input asp-for="StartDate" class="form-control" type="date" />
+                            <span asp-validation-for="StartDate" class="text-danger"></span>
+                        </div>
+                        <input asp-for="EndDate" type="hidden" />
+                    </div>
+                    <div class="col-md-6">
+                        <div class="table-responsive">
+                            <table class="table table-bordered text-center">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        @foreach (var day in days)
+                                        {
+                                            <th>@dayLabels[day]</th>
+                                        }
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var slot in slots)
+                                    {
+                                        <tr>
+                                            <td><strong>@slotLabels[slot]</strong></td>
+                                            @foreach (var day in days)
+                                            {
+                                                var value = $"{day}-{slot}";
+                                                <td>
+                                                    <input type="checkbox" name="SelectedScheduleSlots" value="@value"
+                                                           @(Model.SelectedScheduleSlots != null && Model.SelectedScheduleSlots.Contains(value) ? "checked" : "") />
+                                                </td>
+                                            }
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="MaxStudents" class="control-label">Số học viên tối đa:</label>
+                            <input asp-for="MaxStudents" class="form-control" type="number" />
+                            <span asp-validation-for="MaxStudents" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="TeacherIds" class="control-label">Giáo viên:</label>
+                            <select asp-for="TeacherIds" class="form-control" multiple="multiple"
+                                    asp-items="@(new SelectList(Model.Teachers, "id", "User.UserName"))">
+                            </select>
+                            <span asp-validation-for="TeacherIds" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group mt-3 text-end">
+                    <button type="submit" class="btn btn-warning">Lưu thay đổi</button>
+                    <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+} 

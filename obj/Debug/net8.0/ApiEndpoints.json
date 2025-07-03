@@ -1,0 +1,75 @@
+[
+  {
+    "ContainingType": "H\u1EC7_th\u1ED1ng_d\u1EA1y_h\u1ECDc_trung_t\u00E2m_ngo\u1EA1i_ng\u1EEF_v\u00E0_tin_h\u1ECDc.Controllers.AnalyticsApiController",
+    "Method": "GetActiveUsers",
+    "RelativePath": "api/AnalyticsApi/ActiveUsers",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "H\u1EC7_th\u1ED1ng_d\u1EA1y_h\u1ECDc_trung_t\u00E2m_ngo\u1EA1i_ng\u1EEF_v\u00E0_tin_h\u1ECDc.Controllers.AnalyticsApiController",
+    "Method": "TrackPageVisit",
+    "RelativePath": "api/AnalyticsApi/TrackPageVisit",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "H\u1EC7_th\u1ED1ng_d\u1EA1y_h\u1ECDc_trung_t\u00E2m_ngo\u1EA1i_ng\u1EEF_v\u00E0_tin_h\u1ECDc.Controllers.PageVisitRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "H\u1EC7_th\u1ED1ng_d\u1EA1y_h\u1ECDc_trung_t\u00E2m_ngo\u1EA1i_ng\u1EEF_v\u00E0_tin_h\u1ECDc.Controllers.AnalyticsApiController",
+    "Method": "GetVisitStats",
+    "RelativePath": "api/AnalyticsApi/VisitStats",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "startDate",
+        "Type": "System.Nullable\u00601[[System.DateTime, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "endDate",
+        "Type": "System.Nullable\u00601[[System.DateTime, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "H\u1EC7_th\u1ED1ng_d\u1EA1y_h\u1ECDc_trung_t\u00E2m_ngo\u1EA1i_ng\u1EEF_v\u00E0_tin_h\u1ECDc.Controllers.NotificationApiController",
+    "Method": "GetNotifications",
+    "RelativePath": "api/NotificationApi",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "H\u1EC7_th\u1ED1ng_d\u1EA1y_h\u1ECDc_trung_t\u00E2m_ngo\u1EA1i_ng\u1EEF_v\u00E0_tin_h\u1ECDc.Controllers.NotificationApiController",
+    "Method": "MarkAsRead",
+    "RelativePath": "api/NotificationApi/{id}/mark-read",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  }
+]

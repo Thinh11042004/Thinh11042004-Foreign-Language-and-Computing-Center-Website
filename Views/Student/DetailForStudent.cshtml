@@ -1,0 +1,64 @@
+@model Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.ViewModel.Course.CourseDetailsViewModel
+
+@{
+    ViewData["Title"] = "Chi tiết khóa học cho học sinh";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h2 class="card-title mb-0">Chi tiết khóa học: @Model.Course.Name</h2>
+        </div>
+        <div class="card-body row">
+            <!-- Phần trái: Thông tin khóa học -->
+            <div class="col-md-8">
+                <dl class="row">
+                    <dt class="col-sm-5">Tên khóa học:</dt>
+                    <dd class="col-sm-7">@Model.Course.Name</dd>
+                    <dt class="col-sm-5">Mô tả:</dt>
+                    <dd class="col-sm-7">@Model.Course.Description</dd>
+                    <dt class="col-sm-5">Loại:</dt>
+                    <dd class="col-sm-7">@Model.Course.Type.ToString()</dd>
+                    <dt class="col-sm-5">Danh mục:</dt>
+                    <dd class="col-sm-7">@Model.Course.Category</dd>
+                    <dt class="col-sm-5">Cấp độ:</dt>
+                    <dd class="col-sm-7">@Model.Course.Level.ToString()</dd>
+                    <dt class="col-sm-5">Học phí:</dt>
+                    <dd class="col-sm-7">@Model.Course.Fee.ToString("N0") VNĐ</dd>
+                    <dt class="col-sm-5">Thời lượng (giờ):</dt>
+                    <dd class="col-sm-7">@Model.Course.DurationHours</dd>
+                    <dt class="col-sm-5">Số học viên tối đa:</dt>
+                    <dd class="col-sm-7">@Model.Course.MaxStudents</dd>
+                    <dt class="col-sm-5">Tổng số lượt đăng ký:</dt>
+                    <dd class="col-sm-7">@Model.TotalEnrollments</dd>
+                    <dt class="col-sm-5">Số lớp đang hoạt động:</dt>
+                    <dd class="col-sm-7">@Model.ActiveClasses</dd>
+                    <dt class="col-sm-5">Đánh giá trung bình:</dt>
+                    <dd class="col-sm-7">@Model.AverageRating.ToString("F1")</dd>
+                </dl>
+            </div>
+
+            <!-- Phần phải: Đăng ký -->
+            <div class="col-md-4 border-start">
+                <h5>Đăng ký khóa học</h5>
+
+                <form asp-action="RegisterCourse" asp-controller="Student" method="post">
+                    <input type="hidden" name="courseId" value="@Model.Course.id" />
+
+                    <div class="mb-3">
+                        <label for="note" class="form-label">Ghi chú thêm (nếu có)</label>
+                        <textarea name="note" class="form-control" placeholder="VD: Tôi muốn học buổi tối..."></textarea>
+                    </div>
+
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-success rounded-pill">Xác nhận đăng ký</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card-footer d-flex justify-content-between">
+            <a asp-action="Index" class="btn btn-secondary">Quay lại trang chủ</a>
+        </div>
+    </div>
+</div>

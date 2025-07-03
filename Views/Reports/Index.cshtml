@@ -1,0 +1,263 @@
+@using Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.ViewModel.ReportViewModel
+@model ReportsIndexViewModel
+
+@{
+    ViewData["Title"] = "Báo cáo";
+}
+
+<h1>Báo cáo & Phân tích</h1>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card bg-primary text-white mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="me-3">
+                        <div class="text-white-75 small">Tổng doanh thu (30 ngày)</div>
+                        <div class="text-lg fw-bold">@Model.TotalRevenueLast30Days.ToString("C0")</div>
+                    </div>
+                    <i class="fas fa-dollar-sign fa-2x"></i>
+                </div>
+            </div>
+            <div class="card-footer d-flex align-items-center justify-content-between small">
+                <a class="text-white stretched-link" asp-controller="Reports" asp-action="Revenue">Xem chi tiết</a>
+                <div class="text-white"><i class="fas fa-angle-right"></i></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-warning text-white mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="me-3">
+                        <div class="text-white-75 small">Tổng lượt đăng ký (30 ngày)</div>
+                        <div class="text-lg fw-bold">@Model.TotalEnrollmentsLast30Days</div>
+                    </div>
+                    <i class="fas fa-user-plus fa-2x"></i>
+                </div>
+            </div>
+            <div class="card-footer d-flex align-items-center justify-content-between small">
+                <a class="text-white stretched-link" asp-controller="Reports" asp-action="Enrollment">Xem chi tiết</a>
+                <div class="text-white"><i class="fas fa-angle-right"></i></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-success text-white mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="me-3">
+                        <div class="text-white-75 small">Tổng số giáo viên</div>
+                        <div class="text-lg fw-bold">@Model.TotalTeachers</div>
+                    </div>
+                    <i class="fas fa-chalkboard-teacher fa-2x"></i>
+                </div>
+            </div>
+            <div class="card-footer d-flex align-items-center justify-content-between small">
+                <a class="text-white stretched-link" asp-controller="UserManagement" asp-action="TeacherList">Xem chi tiết</a>
+                <div class="text-white"><i class="fas fa-angle-right"></i></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-danger text-white mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="me-3">
+                        <div class="text-white-75 small">Tổng số học sinh</div>
+                        <div class="text-lg fw-bold">@Model.TotalStudents</div>
+                    </div>
+                    <i class="fas fa-user-graduate fa-2x"></i>
+                </div>
+            </div>
+            <div class="card-footer d-flex align-items-center justify-content-between small">
+                <a class="text-white stretched-link" asp-controller="UserManagement" asp-action="StudentList">Xem chi tiết</a>
+                <div class="text-white"><i class="fas fa-angle-right"></i></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-chart-area me-1"></i>
+                Biểu đồ doanh thu theo tháng (12 tháng gần nhất)
+            </div>
+            <div class="card-body"><canvas id="revenueChart" width="100%" height="30"></canvas></div>
+            <div class="card-footer small text-muted">Cập nhật @DateTime.Now.ToString("dd/MM/yyyy HH:mm")</div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-chart-bar me-1"></i>
+                Biểu đồ đăng ký theo tháng (6 tháng gần nhất)
+            </div>
+            <div class="card-body"><canvas id="enrollmentChart" width="100%" height="30"></canvas></div>
+            <div class="card-footer small text-muted">Cập nhật @DateTime.Now.ToString("dd/MM/yyyy HH:mm")</div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Báo cáo doanh thu</h5>
+                <p class="card-text">Xem tổng quan về doanh thu và các khoản thanh toán.</p>
+                <a asp-controller="Reports" asp-action="Revenue" class="btn btn-primary">Xem báo cáo</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Báo cáo đăng ký</h5>
+                <p class="card-text">Phân tích dữ liệu đăng ký khóa học và lớp học.</p>
+                <a asp-controller="Reports" asp-action="Enrollment" class="btn btn-primary">Xem báo cáo</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Báo cáo hiệu suất giáo viên</h5>
+                <p class="card-text">Đánh giá hiệu suất và xếp hạng của giáo viên.</p>
+                <a asp-controller="Reports" asp-action="TeacherPerformance" class="btn btn-primary">Xem báo cáo</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Báo cáo tiến độ học sinh</h5>
+                <p class="card-text">Theo dõi tiến độ học tập của học sinh qua các khóa học.</p>
+                <a asp-controller="Reports" asp-action="StudentProgress" class="btn btn-primary">Xem báo cáo</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
+    <script>
+        // Area Chart Example
+        var ctxRevenue = document.getElementById("revenueChart");
+        var revenueChart = new Chart(ctxRevenue, {
+            type: 'line',
+            data: {
+                labels: [], // To be filled by AJAX
+                datasets: [{
+                    label: "Doanh thu",
+                    lineTension: 0.3,
+                    backgroundColor: "rgba(2,117,216,0.2)",
+                    borderColor: "rgba(2,117,216,1)",
+                    pointRadius: 5,
+                    pointBackgroundColor: "rgba(2,117,216,1)",
+                    pointBorderColor: "rgba(255,255,255,0.8)",
+                    pointHoverRadius: 5,
+                    pointHoverBackgroundColor: "rgba(2,117,216,1)",
+                    pointHitRadius: 50,
+                    pointBorderWidth: 2,
+                    data: [], // To be filled by AJAX
+                }],
+            },
+            options: {
+                scales: {
+                    xAxes: [{
+                        time: {
+                            unit: 'date'
+                        },
+                        gridLines: {
+                            display: false
+                        },
+                        ticks: {
+                            maxTicksLimit: 7
+                        }
+                    }],
+                    yAxes: [{
+                        ticks: {
+                            min: 0,
+                            maxTicksLimit: 5
+                        },
+                        gridLines: {
+                            color: "rgba(0, 0, 0, .125)",
+                        }
+                    }],
+                },
+                legend: {
+                    display: false
+                }
+            }
+        });
+
+        // Bar Chart Example
+        var ctxEnrollment = document.getElementById("enrollmentChart");
+        var enrollmentChart = new Chart(ctxEnrollment, {
+            type: 'bar',
+            data: {
+                labels: [], // To be filled by AJAX
+                datasets: [{
+                    label: "Đăng ký",
+                    backgroundColor: "rgba(255,193,7,0.8)",
+                    borderColor: "rgba(255,193,7,1)",
+                    data: [], // To be filled by AJAX
+                }],
+            },
+            options: {
+                scales: {
+                    xAxes: [{
+                        time: {
+                            unit: 'month'
+                        },
+                        gridLines: {
+                            display: false
+                        },
+                        ticks: {
+                            maxTicksLimit: 6
+                        }
+                    }],
+                    yAxes: [{
+                        ticks: {
+                            min: 0,
+                            maxTicksLimit: 5
+                        },
+                        gridLines: {
+                            display: true
+                        }
+                    }],
+                },
+                legend: {
+                    display: false
+                }
+            }
+        });
+
+        // Fetch data for charts
+        function fetchChartData() {
+            fetch('/Reports/Revenue?startDate=@DateTime.Now.AddMonths(-12).ToString("yyyy-MM-dd")&endDate=@DateTime.Now.ToString("yyyy-MM-dd")')
+                .then(response => response.json())
+                .then(data => {
+                    const monthlyRevenue = data.monthlyBreakdown.sort((a, b) => new Date(a.year, a.month - 1) - new Date(b.year, b.month - 1));
+                    revenueChart.data.labels = monthlyRevenue.map(m => `Tháng ${m.month}/${m.year}`);
+                    revenueChart.data.datasets[0].data = monthlyRevenue.map(m => m.revenue);
+                    revenueChart.update();
+                });
+
+            fetch('/Reports/Enrollment?startDate=@DateTime.Now.AddMonths(-6).ToString("yyyy-MM-dd")&endDate=@DateTime.Now.ToString("yyyy-MM-dd")')
+                .then(response => response.json())
+                .then(data => {
+                    const monthlyEnrollments = data.monthlyEnrollments.sort((a, b) => new Date(a.year, a.month - 1) - new Date(b.year, b.month - 1));
+                    enrollmentChart.data.labels = monthlyEnrollments.map(m => `Tháng ${m.month}/${m.year}`);
+                    enrollmentChart.data.datasets[0].data = monthlyEnrollments.map(m => m.count);
+                    enrollmentChart.update();
+                });
+        }
+
+        $(document).ready(function () {
+            fetchChartData();
+        });
+    </script>
+} 

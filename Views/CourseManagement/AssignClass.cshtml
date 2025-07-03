@@ -1,0 +1,42 @@
+@model Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.Learning.Enrollment
+@using Microsoft.AspNetCore.Mvc.Rendering
+@{
+    ViewData["Title"] = "Phân lớp cho học viên";
+    var classes = ViewBag.Classes as SelectList;
+}
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h2 class="card-title mb-0">Phân lớp cho học viên</h2>
+        </div>
+        <div class="card-body">
+            <form asp-action="AssignClass" method="post">
+                <input type="hidden" name="enrollmentId" value="@Model.id" />
+                <div class="mb-3">
+                    <label class="form-label">Họ tên:</label>
+                    <input class="form-control" value="@Model.Student?.User?.FullName" readonly />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Email:</label>
+                    <input class="form-control" value="@Model.Student?.User?.Email" readonly />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Khóa học:</label>
+                    <input class="form-control" value="@Model.Course?.Name" readonly />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Chọn lớp để xếp học viên:</label>
+                    <select name="classId" class="form-select" required>
+                        <option value="">-- Chọn lớp --</option>
+                        @foreach (var item in classes)
+                        {
+                            <option value="@item.Value">@item.Text</option>
+                        }
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Xác nhận phân lớp</button>
+                <a asp-action="Students" asp-route-id="@Model.CourseId" class="btn btn-secondary ms-2">Quay lại</a>
+            </form>
+        </div>
+    </div>
+</div> 

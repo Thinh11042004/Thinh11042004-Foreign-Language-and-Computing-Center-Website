@@ -1,0 +1,40 @@
+@using Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.ViewModel.TeacherViewModel
+@using Hệ_thống_dạy_học_trung_tâm_ngoại_ngữ_và_tin_học.Models.ViewModel.Shared
+@{
+    ViewData["Title"] = "Tạo buổi học";
+    var classes = ViewBag.Classes as List<ClassroomItem>;
+    int? selectedClassId = ViewBag.SelectedClassId as int?;
+}
+<h2 class="mb-4">Tạo buổi học cho lớp</h2>
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+<form asp-action="CreateLesson" method="post">
+    <div class="mb-3">
+        <label for="classId" class="form-label">Chọn lớp</label>
+        <select name="classId" class="form-select" required>
+            <option value="">-- Chọn lớp --</option>
+            @if (classes != null)
+            {
+                foreach (var c in classes)
+                {
+                    <option value="@c.Id" selected="@(selectedClassId == c.Id ? "selected" : null)">@c.Name</option>
+                }
+            }
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="title" class="form-label">Tiêu đề buổi học</label>
+        <input type="text" name="title" class="form-control" required />
+    </div>
+    <div class="mb-3">
+        <label for="scheduledDate" class="form-label">Ngày học</label>
+        <input type="date" name="scheduledDate" class="form-control" required />
+    </div>
+    <button type="submit" class="btn btn-success">Tạo buổi học</button>
+</form> 
