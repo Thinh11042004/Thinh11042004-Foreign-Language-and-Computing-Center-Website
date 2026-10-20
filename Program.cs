@@ -106,7 +106,7 @@ using (var scope = app.Services.CreateScope())
     var context = services.GetRequiredService<ApplicationDbContext>();
     var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
     var roleManager = services.GetRequiredService<RoleManager<ApplicationRole>>();
-    await SeedDataAsync(context, userManager, roleManager);
+    await SeedDataAsync(context, userManager, roleManager, app.Configuration);
 }
 
 // ======================================
@@ -146,7 +146,7 @@ app.Run();
 // ======================================
 // 10. SEED ROLE, USER, PHÒNG HỌC
 // ======================================
-async Task SeedDataAsync(ApplicationDbContext context, UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager)
+async Task SeedDataAsync(ApplicationDbContext context, UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, IConfiguration configuration)
 {
     string[] roles = new[] { "SuperAdmin", "Admin", "Teacher", "Student" };
     foreach (var role in roles)
@@ -159,17 +159,26 @@ async Task SeedDataAsync(ApplicationDbContext context, UserManager<ApplicationUs
 
     if (!await userManager.Users.AnyAsync())
     {
+        // Tài khoản SuperAdmin lấy từ cấu hình (user-secrets / biến môi trường SeedAdmin__*), không hardcode trong source
+        var seedEmail = configuration["SeedAdmin:Email"];
+        var seedPassword = configuration["SeedAdmin:Password"];
+        if (string.IsNullOrWhiteSpace(seedEmail) || string.IsNullOrWhiteSpace(seedPassword))
+        {
+            Console.WriteLine("SeedAdmin:Email / SeedAdmin:Password chưa được cấu hình - bỏ qua tạo tài khoản SuperAdmin.");
+            return;
+        }
+
         var admin = new ApplicationUser
         {
-            UserName = "ntt112004h@gmail.com",
-            Email = "ntt112004h@gmail.com",
+            UserName = seedEmail,
+            Email = seedEmail,
             FullName = "System Administrator",
-            PhoneNumber = "0372513965",
+            PhoneNumber = configuration["SeedAdmin:PhoneNumber"],
             CreatedAt = DateTime.UtcNow,
             EmailConfirmed = true
         };
 
-        var result = await userManager.CreateAsync(admin, "Thinh123!");
+        var result = await userManager.CreateAsync(admin, seedPassword);
         if (result.Succeeded)
         {
             await userManager.AddToRoleAsync(admin, "SuperAdmin");

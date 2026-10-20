@@ -1,1 +1,14 @@
-.vs/ 
+.vs/
+
+# Build output
+bin/
+obj/
+*.user
+
+# Secrets / local config
+.env
+ssl/
+*.pem
+*.pfx
+*.key
+appsettings.*.local.json
